@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Lukaah portfolio: websites, product prototypes, automation tools, and photography."
+    />
+    <title>Lukaah | Portfolio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <canvas id="grain" aria-hidden="true"></canvas>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Lukaah portfolio home">LUKAAH</a>
+      <nav aria-label="Primary navigation">
+        <a href="#work">Work</a>
+        <a href="#domains">Sites</a>
+        <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">Photo</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section-lock">
+        <div class="hero-copy">
+          <p class="kicker">Monochrome canvas / brutal portfolio</p>
+          <h1>Digital work, real-world utilities, and the occasional lens.</h1>
+          <p class="intro">
+            A stripped-down index of sites, apps, product experiments, and visual work built from the current project folder and Tide Trends on GitHub.
+          </p>
+          <div class="actions" aria-label="Portfolio links">
+            <a class="button primary" href="#work">View Work</a>
+            <a class="button" href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">Photography</a>
+          </div>
+        </div>
+
+        <div class="hero-wall" aria-label="Selected project fragments">
+          <figure class="media-tile tall">
+            <img src="./assets/swim-to-surf.png" alt="Swim to Surf project visual" />
+            <figcaption>Swim to Surf</figcaption>
+          </figure>
+          <figure class="media-tile">
+            <img src="./assets/hermes.png" alt="Hermes project banner" />
+            <figcaption>Hermes</figcaption>
+          </figure>
+          <figure class="media-tile">
+            <img src="./assets/merry-bee.jpg" alt="Merry Bee Rentals project image" />
+            <figcaption>Client work</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="ticker" aria-label="Current domains">
+        <span>swimtosurf.co</span>
+        <span>valhaula.com</span>
+        <span>emily-marlowe.com</span>
+        <span>Tide-Trends/tide-trends</span>
+        <span>@lukaahs.photography</span>
+      </section>
+
+      <section id="work" class="work section-lock">
+        <div class="section-heading">
+          <p class="kicker">Selected Work</p>
+          <h2>Built things, not just thumbnails.</h2>
+        </div>
+
+        <article class="project feature reveal">
+          <div class="project-index">01</div>
+          <div class="project-main">
+            <h3>Swim to Surf</h3>
+            <p>
+              A Next.js booking and contact site for private swim lessons, with Supabase, Resend, admin scheduling, instructor profiles, and Stripe wiring.
+            </p>
+            <div class="tags">
+              <span>Next.js</span>
+              <span>Booking</span>
+              <span>Tide Trends</span>
+            </div>
+          </div>
+          <a class="project-link" href="https://github.com/Tide-Trends/tide-trends" target="_blank" rel="noreferrer">GitHub</a>
+        </article>
+
+        <article class="project reveal">
+          <div class="project-index">02</div>
+          <div class="project-main">
+            <h3>Emily Marlowe</h3>
+            <p>
+              A polished wellness and breathwork site with routed content pages, program pages, animated sections, and a calmer client-facing presentation.
+            </p>
+            <div class="tags">
+              <span>React</span>
+              <span>Content</span>
+              <span>Client Site</span>
+            </div>
+          </div>
+          <a class="project-link" href="https://emily-marlowe.com" target="_blank" rel="noreferrer">Visit</a>
+        </article>
+
+        <article class="project reveal">
+          <div class="project-index">03</div>
+          <div class="project-main">
+            <h3>Tabs &amp; Chords</h3>
+            <p>
+              A macOS menu bar app that reads the current song, opens Ultimate Guitar, and can play a matched tab through Apple Music.
+            </p>
+            <div class="tags">
+              <span>Swift</span>
+              <span>macOS</span>
+              <span>Music Tools</span>
+            </div>
+          </div>
+          <a class="project-link" href="https://github.com/Tide-Trends/tabs-and-chords/releases/" target="_blank" rel="noreferrer">Release</a>
+        </article>
+
+        <article class="project reveal">
+          <div class="project-index">04</div>
+          <div class="project-main">
+            <h3>Hermes GUI</h3>
+            <p>
+              Native SwiftUI shell for Hermes Agent with onboarding paths, runtime detection, installer flow, prompt sending, and release packaging plans.
+            </p>
+            <div class="tags">
+              <span>SwiftUI</span>
+              <span>AI Tooling</span>
+              <span>Desktop</span>
+            </div>
+          </div>
+          <span class="project-link ghost">Local</span>
+        </article>
+
+        <article class="project reveal">
+          <div class="project-index">05</div>
+          <div class="project-main">
+            <h3>AFHS Navigation</h3>
+            <p>
+              Indoor wayfinding prototype with role-aware sign-in, multi-floor routing, map rendering, and an AR-ready guidance surface.
+            </p>
+            <div class="tags">
+              <span>SwiftUI</span>
+              <span>Navigation</span>
+              <span>AR</span>
+            </div>
+          </div>
+          <span class="project-link ghost">Prototype</span>
+        </article>
+      </section>
+
+      <section class="photo-slab section-lock">
+        <div>
+          <p class="kicker">Photography</p>
+          <h2>Visual work lives on Instagram.</h2>
+          <p>
+            The portfolio keeps the build work here and routes the photo archive directly to
+            <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">@lukaahs.photography</a>.
+          </p>
+        </div>
+        <div class="photo-grid" aria-label="Local visual samples">
+          <img src="./assets/summit-breathwork.png" alt="Summit Breathwork visual sample" />
+          <img src="./assets/emily-marlowe.png" alt="Emily Marlowe visual sample" />
+        </div>
+      </section>
+
+      <section id="domains" class="domains section-lock">
+        <div class="section-heading">
+          <p class="kicker">Web Properties</p>
+          <h2>Names worth keeping visible.</h2>
+        </div>
+        <div class="domain-list">
+          <a href="https://swimtosurf.co" target="_blank" rel="noreferrer">
+            <span>swimtosurf.co</span>
+            <small>Swim lessons, booking, contact</small>
+          </a>
+          <a href="https://valhaula.com" target="_blank" rel="noreferrer">
+            <span>valhaula.com</span>
+            <small>Owned domain / future project</small>
+          </a>
+          <a href="https://emily-marlowe.com" target="_blank" rel="noreferrer">
+            <span>emily-marlowe.com</span>
+            <small>Client wellness site</small>
+          </a>
+          <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">
+            <span>lukaahs.photography</span>
+            <small>Photography archive</small>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Portfolio / Lukaah</span>
+      <a href="mailto:hello@swimtosurf.co">hello@swimtosurf.co</a>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

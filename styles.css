@@ -98,6 +98,7 @@ nav a:hover,
 }
 
 .section-lock {
+  width: 100%;
   max-width: var(--max);
   margin: 0 auto;
   padding-inline: var(--inset);
@@ -115,6 +116,7 @@ nav a:hover,
 .hero-copy {
   display: grid;
   gap: 24px;
+  min-width: 0;
 }
 
 .kicker {
@@ -140,6 +142,7 @@ h1 {
   line-height: 0.82;
   font-weight: 900;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 h2 {
@@ -211,6 +214,7 @@ h3 {
   grid-template-columns: 1fr 0.8fr;
   grid-auto-rows: minmax(170px, 1fr);
   gap: 14px;
+  min-width: 0;
   transform: rotate(1.3deg);
 }
 
@@ -411,14 +415,13 @@ h3 {
 }
 
 .reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 520ms ease, transform 520ms ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 520ms ease;
 }
 
 .reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+  transform: translateY(-4px);
 }
 
 @keyframes crawl {
@@ -485,6 +488,14 @@ h3 {
 
   .media-tile.tall {
     grid-row: auto;
+  }
+
+  .media-tile {
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .media-tile img {
+    max-width: none;
   }
 
   .project {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Lukaah portfolio: websites, product prototypes, automation tools, and photography."
+      content="Lukaah — web, macOS, and AI builds shipped solo and with Tide Trends. Live client sites, native apps, and photography at lukaah.photography."
     />
     <title>Lukaah | Portfolio</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
@@ -17,148 +17,315 @@
       <a class="brand" href="#top" aria-label="Lukaah portfolio home">LUKAAH</a>
       <nav aria-label="Primary navigation">
         <a href="#work">Work</a>
+        <a href="#signal">Why</a>
+        <a href="#pay">Pay</a>
         <a href="#domains">Sites</a>
-        <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">Photo</a>
+        <a href="https://lukaah.photography" target="_blank" rel="noreferrer">Photo</a>
       </nav>
     </header>
 
     <main id="top">
       <section class="hero section-lock">
         <div class="hero-copy">
-          <p class="kicker">Monochrome canvas / brutal portfolio</p>
+          <p class="kicker"><span class="accent-coral">Monochrome canvas</span> / brutal portfolio</p>
           <h1>Digital work, real-world utilities, and the occasional lens.</h1>
           <p class="intro">
-            A stripped-down index of sites, apps, product experiments, and visual work built from the current project folder and Tide Trends on GitHub.
+            Sites, apps, and experiments shipped by me and
+            <a href="https://github.com/Tide-Trends" target="_blank" rel="noreferrer">Tide Trends</a> — live domains,
+            native macOS tools, and AI plumbing you can actually use.
           </p>
           <div class="actions" aria-label="Portfolio links">
             <a class="button primary" href="#work">View Work</a>
-            <a class="button" href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">Photography</a>
+            <a class="button" href="#pay">Pay invoice</a>
+            <a class="button" href="https://lukaah.photography" target="_blank" rel="noreferrer">Photography</a>
           </div>
         </div>
 
         <div class="hero-wall" aria-label="Selected project fragments">
-          <figure class="media-tile tall">
-            <img src="./assets/swim-to-surf.png" alt="Swim to Surf project visual" />
+          <figure class="media-tile tall accent-ocean">
+            <img src="./assets/swim-to-surf.png" alt="Swim to Surf project visual" loading="eager" />
             <figcaption>Swim to Surf</figcaption>
           </figure>
-          <figure class="media-tile">
-            <img src="./assets/hermes.png" alt="Hermes project banner" />
+          <figure class="media-tile accent-gold">
+            <img src="./assets/hermes.png" alt="Hermes project banner" loading="lazy" />
             <figcaption>Hermes</figcaption>
           </figure>
-          <figure class="media-tile">
-            <img src="./assets/merry-bee.jpg" alt="Merry Bee Rentals project image" />
+          <figure class="media-tile accent-violet">
+            <img src="./assets/merry-bee.jpg" alt="Merry Bee Rentals project image" loading="lazy" />
             <figcaption>Client work</figcaption>
           </figure>
         </div>
       </section>
 
-      <section class="ticker" aria-label="Current domains">
-        <span>swimtosurf.co</span>
-        <span>valhaula.com</span>
-        <span>emily-marlowe.com</span>
-        <span>Tide-Trends/tide-trends</span>
-        <span>@lukaahs.photography</span>
+      <section class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <div class="ticker-set">
+            <span>lukaah.com</span>
+            <span>swimtosurf.co</span>
+            <span>emily-marlowe.com</span>
+            <span>lukaah.photography</span>
+            <span>valhaula.com</span>
+            <span>macOS + web + AI</span>
+          </div>
+          <div class="ticker-set" aria-hidden="true">
+            <span>lukaah.com</span>
+            <span>swimtosurf.co</span>
+            <span>emily-marlowe.com</span>
+            <span>lukaah.photography</span>
+            <span>valhaula.com</span>
+            <span>macOS + web + AI</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="signal" class="signal section-lock">
+        <div class="section-heading">
+          <p class="kicker">Why this isn't a template</p>
+          <h2>Built different on purpose.</h2>
+        </div>
+        <div class="signal-grid">
+          <article class="signal-card reveal accent-coral">
+            <h3>Live domains</h3>
+            <p>Production sites with DNS, SSL, and Stripe — not localhost demos.</p>
+          </article>
+          <article class="signal-card reveal accent-ocean">
+            <h3>One builder, full stack</h3>
+            <p>Next.js client work, SwiftUI macOS apps, and AI bridges in the same portfolio.</p>
+          </article>
+          <article class="signal-card reveal accent-gold">
+            <h3>Solo speed + Tide Trends</h3>
+            <p>Shipped under me and the org — fast decisions, real repos, public releases.</p>
+          </article>
+          <article class="signal-card reveal accent-violet">
+            <h3>AI that ships</h3>
+            <p>iMessage bots, MCP context stores, OpenAI-compatible engines — not slide decks.</p>
+          </article>
+          <article class="signal-card reveal accent-coral">
+            <h3>Security-minded</h3>
+            <p>Shannon autonomous testing, attention-lock tooling, and production auth patterns.</p>
+          </article>
+          <article class="signal-card reveal accent-ocean">
+            <h3>Pay on the site</h3>
+            <p>Agreed invoices paid here via Stripe Checkout — scoped, receipted, done.</p>
+          </article>
+        </div>
       </section>
 
       <section id="work" class="work section-lock">
         <div class="section-heading">
           <p class="kicker">Selected Work</p>
           <h2>Built things, not just thumbnails.</h2>
+          <p class="section-lead">Curated from Tide Trends repos — the ones worth showing first.</p>
         </div>
 
-        <article class="project feature reveal">
-          <div class="project-index">01</div>
-          <div class="project-main">
-            <h3>Swim to Surf</h3>
-            <p>
-              A Next.js booking and contact site for private swim lessons, with Supabase, Resend, admin scheduling, instructor profiles, and Stripe wiring.
-            </p>
-            <div class="tags">
-              <span>Next.js</span>
-              <span>Booking</span>
-              <span>Tide Trends</span>
+        <div class="project-list">
+          <article class="project feature reveal">
+            <div class="project-index accent-coral">01</div>
+            <div class="project-main">
+              <h3>Swim to Surf</h3>
+              <p>
+                Live Next.js booking site — Supabase, Resend, admin scheduling, instructor profiles, and Stripe
+                checkout for private swim lessons.
+              </p>
+              <div class="tags">
+                <span>Next.js</span>
+                <span>Stripe</span>
+                <span>Live</span>
+              </div>
             </div>
-          </div>
-          <a class="project-link" href="https://github.com/Tide-Trends/tide-trends" target="_blank" rel="noreferrer">GitHub</a>
-        </article>
+            <a class="project-link" href="https://swimtosurf.co" target="_blank" rel="noreferrer">Live</a>
+          </article>
 
-        <article class="project reveal">
-          <div class="project-index">02</div>
-          <div class="project-main">
-            <h3>Emily Marlowe</h3>
-            <p>
-              A polished wellness and breathwork site with routed content pages, program pages, animated sections, and a calmer client-facing presentation.
-            </p>
-            <div class="tags">
-              <span>React</span>
-              <span>Content</span>
-              <span>Client Site</span>
+          <article class="project reveal">
+            <div class="project-index accent-ocean">02</div>
+            <div class="project-main">
+              <h3>Shannon</h3>
+              <p>
+                Fully autonomous AI security agent that finds real exploits in web apps — 96.15% success on the
+                hint-free XBOW Benchmark.
+              </p>
+              <div class="tags">
+                <span>Security AI</span>
+                <span>Autonomous</span>
+                <span>Benchmarked</span>
+              </div>
             </div>
-          </div>
-          <a class="project-link" href="https://emily-marlowe.com" target="_blank" rel="noreferrer">Visit</a>
-        </article>
+            <a class="project-link" href="https://github.com/Tide-Trends/shannon" target="_blank" rel="noreferrer">GitHub</a>
+          </article>
 
-        <article class="project reveal">
-          <div class="project-index">03</div>
-          <div class="project-main">
-            <h3>Tabs &amp; Chords</h3>
-            <p>
-              A macOS menu bar app that reads the current song, opens Ultimate Guitar, and can play a matched tab through Apple Music.
-            </p>
-            <div class="tags">
-              <span>Swift</span>
-              <span>macOS</span>
-              <span>Music Tools</span>
+          <article class="project reveal">
+            <div class="project-index accent-gold">03</div>
+            <div class="project-main">
+              <h3>Poke for Mac</h3>
+              <p>
+                Native macOS menubar app — SwiftUI shell, WebSocket client, SwiftData persistence, and an
+                OpenAI-compatible poke-engine backend.
+              </p>
+              <div class="tags">
+                <span>SwiftUI</span>
+                <span>macOS</span>
+                <span>AI</span>
+              </div>
             </div>
-          </div>
-          <a class="project-link" href="https://github.com/Tide-Trends/tabs-and-chords/releases/" target="_blank" rel="noreferrer">Release</a>
-        </article>
+            <a class="project-link" href="https://github.com/Tide-Trends/poke-for-mac" target="_blank" rel="noreferrer">Repo</a>
+          </article>
 
-        <article class="project reveal">
-          <div class="project-index">04</div>
-          <div class="project-main">
-            <h3>Hermes GUI</h3>
-            <p>
-              Native SwiftUI shell for Hermes Agent with onboarding paths, runtime detection, installer flow, prompt sending, and release packaging plans.
-            </p>
-            <div class="tags">
-              <span>SwiftUI</span>
-              <span>AI Tooling</span>
-              <span>Desktop</span>
+          <article class="project reveal">
+            <div class="project-index accent-violet">04</div>
+            <div class="project-main">
+              <h3>Emily Marlowe</h3>
+              <p>
+                Client wellness and breathwork site — routed program pages, calm motion, and a polished
+                front-of-house experience.
+              </p>
+              <div class="tags">
+                <span>React</span>
+                <span>Client</span>
+                <span>Content</span>
+              </div>
             </div>
-          </div>
-          <span class="project-link ghost">Local</span>
-        </article>
+            <a class="project-link" href="https://emily-marlowe.com" target="_blank" rel="noreferrer">Visit</a>
+          </article>
 
-        <article class="project reveal">
-          <div class="project-index">05</div>
-          <div class="project-main">
-            <h3>AFHS Navigation</h3>
-            <p>
-              Indoor wayfinding prototype with role-aware sign-in, multi-floor routing, map rendering, and an AR-ready guidance surface.
-            </p>
-            <div class="tags">
-              <span>SwiftUI</span>
-              <span>Navigation</span>
-              <span>AR</span>
+          <article class="project reveal">
+            <div class="project-index accent-coral">05</div>
+            <div class="project-main">
+              <h3>iMessage AI Bridge</h3>
+              <p>Text your AI via iMessage — Grok, ChatGPT, Gemini, and Claude, all API-powered from one bridge.</p>
+              <div class="tags">
+                <span>iMessage</span>
+                <span>Multi-model</span>
+                <span>API</span>
+              </div>
             </div>
+            <a class="project-link" href="https://github.com/Tide-Trends/imessage-ai-bridge" target="_blank" rel="noreferrer">GitHub</a>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-index accent-ocean">06</div>
+            <div class="project-main">
+              <h3>Context Bridge</h3>
+              <p>Shared MCP context store for AI coding tools — Cursor, VS Code, OpenCode, and Antigravity in sync.</p>
+              <div class="tags">
+                <span>MCP</span>
+                <span>DevTools</span>
+                <span>Context</span>
+              </div>
+            </div>
+            <a class="project-link" href="https://github.com/Tide-Trends/context-bridge" target="_blank" rel="noreferrer">GitHub</a>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-index accent-gold">07</div>
+            <div class="project-main">
+              <h3>Tabs &amp; Chords</h3>
+              <p>
+                macOS menu bar app that reads the current song, opens Ultimate Guitar, and plays matched tabs
+                through Apple Music.
+              </p>
+              <div class="tags">
+                <span>Swift</span>
+                <span>macOS</span>
+                <span>Shipped</span>
+              </div>
+            </div>
+            <a class="project-link" href="https://github.com/Tide-Trends/tabs-and-chords/releases/" target="_blank" rel="noreferrer">Release</a>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-index accent-violet">08</div>
+            <div class="project-main">
+              <h3>FlierTrack</h3>
+              <p>Field flyer tracking and site work behind valhaula.com — ops tooling built for real-world distribution.</p>
+              <div class="tags">
+                <span>Web</span>
+                <span>Ops</span>
+                <span>Domain</span>
+              </div>
+            </div>
+            <a class="project-link" href="https://github.com/Tide-Trends/FlierTrack" target="_blank" rel="noreferrer">GitHub</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="pay" class="hire section-lock">
+        <div class="section-heading">
+          <p class="kicker">Payments</p>
+          <h2>Pay the agreed price.</h2>
+          <p class="section-lead">Fixed packages or a custom amount for scoped work — Stripe Checkout, receipt included.</p>
+        </div>
+
+        <div class="pay-custom reveal">
+          <div class="pay-custom-copy">
+            <h3>Custom invoice</h3>
+            <p>Already scoped a project? Enter the amount we agreed on and go straight to checkout.</p>
           </div>
-          <span class="project-link ghost">Prototype</span>
-        </article>
+          <form class="pay-form" id="custom-pay-form">
+            <label class="pay-field">
+              <span>Amount (USD)</span>
+              <input type="number" id="pay-amount" name="amount" min="1" max="50000" step="0.01" placeholder="1500.00" required />
+            </label>
+            <label class="pay-field">
+              <span>Reference</span>
+              <input type="text" id="pay-reference" name="reference" maxlength="120" placeholder="Invoice / project name" />
+            </label>
+            <button type="submit" class="button primary" id="custom-pay-btn">Pay agreed amount</button>
+          </form>
+        </div>
+
+        <p class="pay-divider" aria-hidden="true">or pick a package</p>
+
+        <div class="project-list">
+          <article class="project reveal">
+            <div class="project-index accent-coral">A</div>
+            <div class="project-main">
+              <h3>Strategy call</h3>
+              <p>45 minutes to map stack, scope, and timeline.</p>
+            </div>
+            <button type="button" class="project-link checkout-btn" data-price-env="STRIPE_PRICE_DISCOVERY">
+              Book
+            </button>
+          </article>
+
+          <article class="project feature reveal">
+            <div class="project-index accent-ocean">B</div>
+            <div class="project-main">
+              <h3>Project deposit</h3>
+              <p>Reserve build time — credited toward the full invoice.</p>
+            </div>
+            <button type="button" class="project-link primary checkout-btn" data-price-env="STRIPE_PRICE_PROJECT">
+              Pay
+            </button>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-index accent-gold">C</div>
+            <div class="project-main">
+              <h3>Monthly retainer</h3>
+              <p>Updates, fixes, and small features for live sites.</p>
+            </div>
+            <button type="button" class="project-link checkout-btn" data-price-env="STRIPE_PRICE_RETAINER">
+              Start
+            </button>
+          </article>
+        </div>
+
+        <p class="hire-status" id="checkout-status" role="status" aria-live="polite"></p>
       </section>
 
       <section class="photo-slab section-lock">
-        <div>
+        <div class="photo-copy">
           <p class="kicker">Photography</p>
-          <h2>Visual work lives on Instagram.</h2>
+          <h2>Frames at <span class="accent-coral">lukaah.photography</span>.</h2>
           <p>
-            The portfolio keeps the build work here and routes the photo archive directly to
-            <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">@lukaahs.photography</a>.
+            Build work lives here; the photo archive lives at
+            <a href="https://lukaah.photography" target="_blank" rel="noreferrer">lukaah.photography</a>.
           </p>
+          <a class="button" href="https://lukaah.photography" target="_blank" rel="noreferrer">View gallery</a>
         </div>
-        <div class="photo-grid" aria-label="Local visual samples">
-          <img src="./assets/summit-breathwork.png" alt="Summit Breathwork visual sample" />
-          <img src="./assets/studio.png" alt="Studio visual sample" />
+        <div class="photo-grid" aria-label="Visual samples">
+          <img src="./assets/summit-breathwork.png" alt="Summit Breathwork visual sample" loading="lazy" />
+          <img src="./assets/studio.png" alt="Studio visual sample" loading="lazy" />
         </div>
       </section>
 
@@ -170,27 +337,32 @@
         <div class="domain-list">
           <a href="https://swimtosurf.co" target="_blank" rel="noreferrer">
             <span>swimtosurf.co</span>
-            <small>Swim lessons, booking, contact</small>
-          </a>
-          <a href="https://valhaula.com" target="_blank" rel="noreferrer">
-            <span>valhaula.com</span>
-            <small>Owned domain / future project</small>
+            <small>Lessons, booking, Stripe</small>
           </a>
           <a href="https://emily-marlowe.com" target="_blank" rel="noreferrer">
             <span>emily-marlowe.com</span>
             <small>Client wellness site</small>
           </a>
-          <a href="https://www.instagram.com/lukaahs.photography/" target="_blank" rel="noreferrer">
-            <span>lukaahs.photography</span>
+          <a href="https://lukaah.photography" target="_blank" rel="noreferrer">
+            <span>lukaah.photography</span>
             <small>Photography archive</small>
+          </a>
+          <a href="https://valhaula.com" target="_blank" rel="noreferrer">
+            <span>valhaula.com</span>
+            <small>FlierTrack / field ops</small>
           </a>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>Portfolio / Lukaah</span>
-      <a href="mailto:hello@swimtosurf.co">hello@swimtosurf.co</a>
+      <div class="footer-inner section-lock">
+        <span>Lukaah + Tide Trends</span>
+        <div class="footer-links">
+          <a href="mailto:hello@lukaah.com">hello@lukaah.com</a>
+          <a href="https://github.com/Tide-Trends" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </div>
     </footer>
 
     <script src="./script.js"></script>

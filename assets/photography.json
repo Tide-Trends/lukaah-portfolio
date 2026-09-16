@@ -1,0 +1,58 @@
+[
+  {
+    "name": "eagle",
+    "src": "/assets/photos/eagle.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFQGY8EgZH/",
+    "caption": "Eagle eyes",
+    "alt": "A close-up of a bald eagle, photographed by Lukaah"
+  },
+  {
+    "name": "heron",
+    "src": "/assets/photos/heron.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DQLIeWPCRny/",
+    "caption": "Standing still",
+    "alt": "A heron standing in deep blue water, photographed by Lukaah"
+  },
+  {
+    "name": "deer",
+    "src": "/assets/photos/deer.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFQx-jmJ8p/",
+    "caption": "The whole crew",
+    "alt": "Three deer among autumn leaves, photographed by Lukaah"
+  },
+  {
+    "name": "cat",
+    "src": "/assets/photos/cat.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFRD_oEjkY/",
+    "caption": "Hide & seek",
+    "alt": "A cat peering through branches, photographed by Lukaah"
+  },
+  {
+    "name": "yellow-bird",
+    "src": "/assets/photos/yellow-bird.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFQmc-kqpR/",
+    "caption": "A little color",
+    "alt": "A bright yellow bird perched on a mossy branch, photographed by Lukaah"
+  },
+  {
+    "name": "osprey",
+    "src": "/assets/photos/osprey.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFPx2YEvNz/",
+    "caption": "On the wing",
+    "alt": "An osprey flying against a blue sky, photographed by Lukaah"
+  },
+  {
+    "name": "spoonbill",
+    "src": "/assets/photos/spoonbill.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFSNv7GPz0/",
+    "caption": "Quite a profile",
+    "alt": "A pink and white spoonbill in profile, photographed by Lukaah"
+  },
+  {
+    "name": "orangutan",
+    "src": "/assets/photos/orangutan.webp",
+    "post": "https://www.instagram.com/lukaah.photography/p/DXFSYPIGBRO/",
+    "caption": "A quiet moment",
+    "alt": "An orangutan holding a young orangutan, photographed by Lukaah"
+  }
+]

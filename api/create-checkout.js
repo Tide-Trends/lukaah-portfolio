@@ -15,15 +15,6 @@ function resolvePriceId(priceKey) {
   return process.env[envName] || process.env.STRIPE_PRICE_ID;
 }
 
-function getOrigin(req) {
-  return (
-    req.headers.origin ||
-    (req.headers["x-forwarded-proto"] && req.headers.host
-      ? `${req.headers["x-forwarded-proto"]}://${req.headers.host}`
-      : "https://lukaah.com")
-  );
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -32,7 +23,8 @@ export default async function handler(req, res) {
 
   if (!process.env.STRIPE_SECRET_KEY) {
     return res.status(503).json({
-      error: "Payments are not configured yet. Add STRIPE_SECRET_KEY in Vercel.",
+      error:
+        "Online invoice payments are not available yet. Please use the payment link in your agreement or contact hello@lukaah.com.",
     });
   }
 
@@ -43,7 +35,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid request body" });
   }
 
-  const origin = getOrigin(req);
+  const origin = "https://lukaah.com";
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
@@ -57,13 +49,17 @@ export default async function handler(req, res) {
         });
       }
 
-      const reference = String(body.reference || "").trim().slice(0, 120);
+      const reference = String(body.reference || "")
+        .trim()
+        .slice(0, 120);
       lineItems = [
         {
           price_data: {
             currency: "usd",
             product_data: {
-              name: reference ? `Payment — ${reference}` : "Agreed project payment",
+              name: reference
+                ? `Payment — ${reference}`
+                : "Agreed project payment",
               description: "Custom payment via lukaah.com",
             },
             unit_amount: cents,
@@ -75,7 +71,8 @@ export default async function handler(req, res) {
       const priceId = resolvePriceId(body.priceKey || "default");
       if (!priceId) {
         return res.status(503).json({
-          error: "No Stripe price configured. Add STRIPE_PRICE_ID (and optional tier prices) in Vercel.",
+          error:
+            "This payment option is not available yet. Please contact hello@lukaah.com for your payment link.",
         });
       }
       lineItems = [{ price: priceId, quantity: 1 }];
@@ -87,10 +84,21 @@ export default async function handler(req, res) {
       success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#pay`,
       allow_promotion_codes: true,
+      metadata: {
+        lukaah_checkout: "invoice_v1",
+        reference: String(body.reference || "")
+          .trim()
+          .slice(0, 120),
+      },
     });
 
     return res.status(200).json({ url: session.url });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res
+      .status(500)
+      .json({
+        error:
+          "Checkout could not be opened. Please try again or contact hello@lukaah.com.",
+      });
   }
 }

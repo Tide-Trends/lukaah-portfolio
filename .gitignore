@@ -1,2 +1,7 @@
 .vercel
 portfolio-mobile.png
+
+node_modules/
+.env
+.env.local
+.env.*.local

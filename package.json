@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "pdf-lib": "^1.17.1",
     "stripe": "^18.0.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js"
   }
 }

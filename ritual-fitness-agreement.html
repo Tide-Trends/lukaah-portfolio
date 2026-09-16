@@ -331,7 +331,7 @@
       [box, name, email].forEach(function (field) {
         field.addEventListener("input", resetCheckout);
       });
-      pay.addEventListener("click", function () {
+      pay.addEventListener("click", async function () {
         if (!box.checked) {
           status.textContent = "Please check the agreement box before continuing.";
           box.focus();
@@ -343,15 +343,31 @@
           return;
         }
         if (!email.reportValidity()) return;
+        pay.disabled = true;
+        status.textContent = "Saving your agreement record…";
+        var record;
+        try {
+          var response = await fetch("https://lukaah.com/api/agreement-signature", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accepted: true, name: name.value.trim(), email: email.value.trim() })
+          });
+          record = await response.json();
+          if (!response.ok || !record.recordId) throw new Error(record.error || "Could not save the agreement record.");
+        } catch (error) {
+          status.textContent = error.message || "Could not save the agreement record. Please try again.";
+          pay.disabled = false;
+          return;
+        }
         var button = document.createElement("stripe-buy-button");
         button.setAttribute("buy-button-id", "buy_btn_1UG6S4FMsJJmkcgLBiw97YFe");
         button.setAttribute("publishable-key", "pk_live_51R6lDxFMsJJmkcgL2pvuBPTy0XVMwdy1YBALvVdk6r3EjrPWoSW4qMG1gXEHago4pOABjwQfvHrgA0ThPGyxWDbW001VjkjTy5");
         button.setAttribute("customer-email", email.value.trim());
-        button.setAttribute("client-reference-id", "ritual_fitness_agreement_2026_09_15_v2_deposit");
+        button.setAttribute("client-reference-id", record.recordId);
         var link = document.createElement("a");
         var url = new URL("https://buy.stripe.com/bJe4gzfrJ3CH6qN8FAaAw01");
         url.searchParams.set("prefilled_email", email.value.trim());
-        url.searchParams.set("client_reference_id", "ritual_fitness_agreement_2026_09_15_v2_deposit");
+        url.searchParams.set("client_reference_id", record.recordId);
         link.href = url.toString();
         link.textContent = "Open secure Stripe checkout";
         var fallback = document.createElement("p");
@@ -360,7 +376,7 @@
         checkout.replaceChildren(button, fallback);
         checkout.hidden = false;
         pay.hidden = true;
-        status.textContent = "Pay your $1,000 deposit using the Stripe button or secure checkout link. Your email will be passed to Stripe for checkout.";
+        status.textContent = "Your agreement record was emailed to Lukaah. Pay your $1,000 deposit using the Stripe button or secure checkout link.";
       });
     })();
   </script>

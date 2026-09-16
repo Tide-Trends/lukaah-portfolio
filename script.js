@@ -70,17 +70,6 @@ shuffle.addEventListener("click", () => {
   link.href = photo.src;
   link.dataset.photo = heroIndex;
 });
-const payDetails = document.getElementById("pay");
-function openPaymentSection() {
-  if (location.hash === "#pay") payDetails.open = true;
-}
-window.addEventListener("hashchange", openPaymentSection);
-openPaymentSection();
-document.querySelectorAll('a[href="#pay"]').forEach((a) =>
-  a.addEventListener("click", () => {
-    payDetails.open = true;
-  }),
-);
 const navLinks = [...document.querySelectorAll('nav a[href^="#"]')];
 if ("IntersectionObserver" in window) {
   const observer = new IntersectionObserver(
@@ -99,68 +88,5 @@ if ("IntersectionObserver" in window) {
   navLinks.forEach((a) => {
     const section = document.querySelector(a.hash);
     if (section) observer.observe(section);
-  });
-}
-
-const statusEl = document.querySelector("#checkout-status");
-
-function setStatus(message, isError = false) {
-  if (!statusEl) return;
-  statusEl.textContent = message;
-  statusEl.classList.toggle("is-error", isError);
-}
-
-async function openCheckout(payload, trigger) {
-  if (trigger) {
-    trigger.disabled = true;
-    trigger.classList.add("is-loading");
-  }
-  setStatus("Opening secure checkout…", false);
-
-  try {
-    const response = await fetch("/api/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    if (!response.ok)
-      throw new Error(
-        response.status === 503
-          ? "Online invoice payments aren’t configured yet. Please use the payment link in your agreement or contact hello@lukaah.com."
-          : "Checkout could not be opened. Please try again or contact hello@lukaah.com.",
-      );
-    window.location.href = data.url;
-  } catch (error) {
-    setStatus(error.message, true);
-    if (trigger) {
-      trigger.disabled = false;
-      trigger.classList.remove("is-loading");
-    }
-  }
-}
-
-const PRICE_KEYS = {
-  STRIPE_PRICE_DISCOVERY: "discovery",
-  STRIPE_PRICE_PROJECT: "project",
-  STRIPE_PRICE_RETAINER: "retainer",
-};
-
-document.querySelectorAll(".checkout-btn").forEach((button) => {
-  button.addEventListener("click", () => {
-    const priceKey = PRICE_KEYS[button.dataset.priceEnv] || "default";
-    openCheckout({ priceKey }, button);
-  });
-});
-
-const customPayForm = document.querySelector("#custom-pay-form");
-if (customPayForm) {
-  customPayForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const amount = Number(document.querySelector("#pay-amount")?.value);
-    const reference =
-      document.querySelector("#pay-reference")?.value?.trim() || "";
-    const btn = document.querySelector("#custom-pay-btn");
-    openCheckout({ customAmount: amount, reference }, btn);
   });
 }

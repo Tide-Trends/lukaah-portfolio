@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { PDFDocument } from "pdf-lib";
 import { verifiedReceipt, receiptPdf, DEPOSIT_PRICE } from "../lib/receipt.js";
+import { sendReceiptEmail } from "../lib/email.js";
 import { makeReceiptHandler } from "../api/receipt.js";
 const id = "cs_live_123456789012345678901234";
 export function fixture() {
@@ -155,5 +156,35 @@ test("verified endpoint provides JSON and a downloadable PDF", async () => {
   } finally {
     if (prev === undefined) delete process.env.STRIPE_RECEIPT_KEY;
     else process.env.STRIPE_RECEIPT_KEY = prev;
+  }
+});
+test("email delivery addresses the Stripe customer and includes both PDFs", async () => {
+  const previousKey = process.env.RESEND_API_KEY;
+  const previousFrom = process.env.RECEIPT_FROM_EMAIL;
+  process.env.RESEND_API_KEY = "re_test";
+  process.env.RECEIPT_FROM_EMAIL = "receipts@lukaah.com";
+  let sent;
+  try {
+    await sendReceiptEmail(
+      {
+        receipt: verifiedReceipt(fixture()),
+        receiptPdf: Buffer.from("receipt"),
+        agreementPdf: Buffer.from("agreement"),
+      },
+      {
+        fetcher: async (_url, options) => {
+          sent = JSON.parse(options.body);
+          return { ok: true };
+        },
+      },
+    );
+    assert.deepEqual(sent.to, ["sample@example.com"]);
+    assert.equal(sent.attachments.length, 2);
+    assert.match(sent.subject, /Ritual Fitness Hawaii/);
+  } finally {
+    if (previousKey === undefined) delete process.env.RESEND_API_KEY;
+    else process.env.RESEND_API_KEY = previousKey;
+    if (previousFrom === undefined) delete process.env.RECEIPT_FROM_EMAIL;
+    else process.env.RECEIPT_FROM_EMAIL = previousFrom;
   }
 });

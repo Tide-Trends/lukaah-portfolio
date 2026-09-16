@@ -409,24 +409,6 @@ h3 {
     serif;
   letter-spacing: -0.045em;
 }
-.art-arrow {
-  position: absolute;
-  right: 22px;
-  bottom: 22px;
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  font-size: 24px;
-  transition: background 0.2s;
-}
-.project-art:hover .art-arrow {
-  background: var(--coral);
-  color: white;
-}
 .project-description {
   display: flex;
   justify-content: space-between;

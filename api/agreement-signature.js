@@ -58,18 +58,20 @@ export function makeAgreementSignatureHandler({
     const sourceIp = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "Unavailable";
     const userAgent = String(req.headers["user-agent"] || "Unavailable").slice(0, 500);
     const agreementHash = createHash("sha256").update(agreement).digest("hex");
-    const response = await fetcher("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: process.env.SIGNATURE_FROM_EMAIL,
-        to: [process.env.SIGNATURE_RECORD_EMAIL || "hello@lukaah.com"],
-        reply_to: email,
-        subject: `Agreement record ${id} — Ritual Fitness Hawaii`,
-        html: `<h2>Agreement acceptance record</h2>
+    let response;
+    try {
+      response = await fetcher("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: process.env.SIGNATURE_FROM_EMAIL,
+          to: [process.env.SIGNATURE_RECORD_EMAIL || "hello@lukaah.com"],
+          reply_to: email,
+          subject: `Agreement record ${id} — Ritual Fitness Hawaii`,
+          html: `<h2>Agreement acceptance record</h2>
           <p>This is an acceptance record created before Stripe checkout. It is not payment confirmation.</p>
           <table><tr><td><strong>Record</strong></td><td>${escape(id)}</td></tr>
           <tr><td><strong>Client</strong></td><td>${escape(name)}</td></tr>
@@ -81,14 +83,17 @@ export function makeAgreementSignatureHandler({
           <tr><td><strong>Browser</strong></td><td>${escape(userAgent)}</td></tr></table>
           <p>Client declaration: “I am Ashley Burnett. I have read this Agreement. I agree to its terms. Pay $1,000.00 to start.”</p>
           <p>The attached PDF is the agreement presented at acceptance.</p>`,
-        attachments: [
-          {
-            filename: "Ritual-Fitness-Hawaii-Website-Agreement.pdf",
-            content: Buffer.from(agreement).toString("base64"),
-          },
-        ],
-      }),
-    });
+          attachments: [
+            {
+              filename: "Ritual-Fitness-Hawaii-Website-Agreement.pdf",
+              content: Buffer.from(agreement).toString("base64"),
+            },
+          ],
+        }),
+      });
+    } catch {
+      return res.status(502).json({ error: "Could not save the agreement record. Please try again." });
+    }
     if (!response.ok)
       return res.status(502).json({ error: "Could not save the agreement record. Please try again." });
     return res.status(201).json({ recordId: id, signedAt });

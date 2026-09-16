@@ -82,6 +82,9 @@
     .pay:hover { opacity: 0.88; }
     button.pay { border: 0; font: inherit; }
     .pay:disabled { opacity: 0.55; cursor: not-allowed; }
+    [hidden] { display: none !important; }
+    #stripe-checkout { margin-top: 18px; }
+    #payment-status { min-height: 1.55em; }
     footer.site { margin-top: 48px; font-size: 12px; color: var(--muted); }
     @media (max-width: 560px) {
       .money { grid-template-columns: 1fr; }
@@ -293,35 +296,67 @@
         <label for="accept" style="text-transform:none;letter-spacing:0;font-size:14.5px;color:var(--ink);margin:0">I am Ashley Burnett. I have read this Agreement. I agree to its terms. Pay $1,000.00 to start.</label>
       </div>
       <label for="name">Typed name</label>
-      <input id="name" type="text" name="name" autocomplete="name" placeholder="Ashley Burnett" />
+      <input id="name" required maxlength="120" type="text" name="name" autocomplete="name" placeholder="Ashley Burnett" />
       <label for="email">Email</label>
-      <input id="email" type="email" name="email" autocomplete="email" placeholder="studio email" />
-      <button class="pay" id="pay" type="button" disabled aria-describedby="payment-status">Deposit payment unavailable</button>
-      <p class="note noprint" id="payment-status">Online deposit payment is not available yet. Please contact Lukaah for the payment link. Filling in this page does not submit your details or complete payment.</p>
+      <input id="email" required type="email" name="email" autocomplete="email" placeholder="studio email" />
+      <button class="pay noprint" id="pay" type="button" aria-describedby="payment-status">Continue to $1,000 deposit payment</button>
+      <div id="stripe-checkout" class="noprint" hidden></div>
+      <p class="note noprint" id="payment-status" role="status" aria-live="polite">Check the agreement box and enter your name and email to continue to secure payment through Stripe. Payment is complete only after Stripe confirms it.</p>
+      <noscript><p>Enable JavaScript to use secure Stripe checkout, or contact Lukaah for a payment link.</p></noscript>
     </div>
 
     <footer class="site">
       Lukaah · lukaah.com · Ritual Fitness Hawaii · ritualfitnesshi.com
     </footer>
   </div>
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
   <script>
     (function () {
       var box = document.getElementById("accept");
       var pay = document.getElementById("pay");
       var name = document.getElementById("name");
-      if (!box || !pay) return;
-      pay.addEventListener("click", function (e) {
+      var email = document.getElementById("email");
+      var checkout = document.getElementById("stripe-checkout");
+      var status = document.getElementById("payment-status");
+      function resetCheckout() {
+        checkout.replaceChildren();
+        checkout.hidden = true;
+        pay.hidden = false;
+        status.textContent = "Check the agreement box and enter your name and email to continue to secure payment through Stripe. Payment is complete only after Stripe confirms it.";
+      }
+      [box, name, email].forEach(function (field) {
+        field.addEventListener("input", resetCheckout);
+      });
+      pay.addEventListener("click", function () {
         if (!box.checked) {
-          e.preventDefault();
+          status.textContent = "Please check the agreement box before continuing.";
           box.focus();
-          alert("Check the agreement box before paying.");
           return;
         }
-        if (name && !name.value.trim()) {
-          e.preventDefault();
+        if (!name.value.trim()) {
+          status.textContent = "Please enter your name before continuing.";
           name.focus();
-          alert("Type your name before paying.");
+          return;
         }
+        if (!email.reportValidity()) return;
+        var button = document.createElement("stripe-buy-button");
+        button.setAttribute("buy-button-id", "buy_btn_1UG6S4FMsJJmkcgLBiw97YFe");
+        button.setAttribute("publishable-key", "pk_live_51R6lDxFMsJJmkcgL2pvuBPTy0XVMwdy1YBALvVdk6r3EjrPWoSW4qMG1gXEHago4pOABjwQfvHrgA0ThPGyxWDbW001VjkjTy5");
+        button.setAttribute("customer-email", email.value.trim());
+        button.setAttribute("client-reference-id", "ritual_fitness_agreement_2026_09_15_deposit");
+        var link = document.createElement("a");
+        var url = new URL("https://buy.stripe.com/bJe4gzfrJ3CH6qN8FAaAw01");
+        url.searchParams.set("prefilled_email", email.value.trim());
+        url.searchParams.set("client_reference_id", "ritual_fitness_agreement_2026_09_15_deposit");
+        link.href = url.toString();
+        link.textContent = "Open secure Stripe checkout";
+        var fallback = document.createElement("p");
+        fallback.className = "note";
+        fallback.appendChild(link);
+        checkout.replaceChildren(button, fallback);
+        checkout.hidden = false;
+        pay.hidden = true;
+        status.textContent = "Pay your $1,000 deposit using the Stripe button or secure checkout link. Your email will be passed to Stripe for checkout.";
       });
     })();
   </script>

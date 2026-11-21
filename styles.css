@@ -590,6 +590,8 @@ h3 {
 }
 .photo-2 .photo-image img {
   height: 390px;
+  /* Tall heron: keep head/beak in frame instead of cropping mid-neck */
+  object-position: 50% 8%;
 }
 .photo-3 {
   margin-top: 55px;
@@ -892,6 +894,7 @@ body:has(#photo-viewer[open]) {
   }
   .photo-2 .photo-image img {
     height: 320px;
+    object-position: 50% 8%;
   }
   .project-art {
     height: 300px;
@@ -1051,6 +1054,7 @@ body:has(#photo-viewer[open]) {
   }
   .photo-2 .photo-image img {
     height: 250px;
+    object-position: 50% 6%;
   }
   .photo-3 {
     margin-top: -55px;
@@ -1137,6 +1141,7 @@ body:has(#photo-viewer[open]) {
   }
   .photo-2 .photo-image img {
     height: 220px;
+    object-position: 50% 5%;
   }
   .site-footer > div {
     gap: 12px;

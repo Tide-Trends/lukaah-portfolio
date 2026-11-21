@@ -59,16 +59,20 @@ viewer.addEventListener("click", (event) => {
 let heroIndex = 0;
 const shuffle = document.getElementById("shuffle");
 shuffle.hidden = false;
-shuffle.addEventListener("click", () => {
-  heroIndex = (heroIndex + 1) % photos.length;
+function applyHeroPhoto(index) {
+  heroIndex = (index + photos.length) % photos.length;
   const photo = photos[heroIndex];
   const image = document.getElementById("hero-image");
   image.src = photo.src;
   image.alt = photo.alt;
+  image.style.objectPosition = photo.objectPosition || "center";
   document.getElementById("hero-caption").textContent = photo.caption;
   const link = document.getElementById("hero-photo-link");
   link.href = photo.src;
-  link.dataset.photo = heroIndex;
+  link.dataset.photo = String(heroIndex);
+}
+shuffle.addEventListener("click", () => {
+  applyHeroPhoto(heroIndex + 1);
 });
 const navLinks = [...document.querySelectorAll('nav a[href^="#"]')];
 if ("IntersectionObserver" in window) {

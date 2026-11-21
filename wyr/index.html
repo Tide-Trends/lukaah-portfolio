@@ -2,986 +2,233 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<script>
+  // Always run from /wyr/ so the offline cache and routing share one scope.
+  if (location.pathname === "/wyr" || location.pathname === "/wyr/index.html") location.replace("/wyr/" + location.search + location.hash);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Line Brain</title>
 <meta name="robots" content="noindex, nofollow" />
-<meta name="description" content="Would you rather, for waiting in lines. Hard choices only." />
-<meta name="theme-color" content="#0e0d0c" />
+<meta name="description" content="Games for when you're stuck in line." />
+<meta name="theme-color" content="#f4f1ec" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0e0d0c" media="(prefers-color-scheme: dark)" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Line Brain" />
+<link rel="manifest" href="/wyr/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/wyr/icon-180.png" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0d0c'/%3E%3Cpath d='M0 0h32v64H0z' fill='%23ff5a36' opacity='.95'/%3E%3Cpath d='M32 0h32v64H32z' fill='%233d7bff' opacity='.95'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%230e0d0c'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
 <style>
 :root {
-  --bg: #f4f1ec;
-  --surface: #ffffff;
-  --ink: #141210;
-  --muted: #6b655d;
-  --line: #ddd6cc;
-  --a: #e8451f;
-  --a-soft: #fde4dc;
-  --b: #2563eb;
-  --b-soft: #dde7fd;
-  --on-accent: #ffffff;
+  --bg: #f4f1ec; --surface: #ffffff; --surface-2: #ebe6df; --ink: #141210; --muted: #6b655d; --line: #ddd6cc;
+  --a: #e8451f; --b: #2563eb; --good: #15803d; --bad: #dc2626; --warn: #d97706; --on-accent: #ffffff;
   --shadow: 0 1px 2px rgba(20,18,16,.06), 0 8px 24px rgba(20,18,16,.06);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0d0c;
-    --surface: #1a1816;
-    --ink: #f4efe8;
-    --muted: #9a928a;
-    --line: #2d2a27;
-    --a: #ff5a36;
-    --a-soft: #3a1a12;
-    --b: #4d86ff;
-    --b-soft: #141f3a;
-    --shadow: none;
-    color-scheme: dark;
+    --bg: #0e0d0c; --surface: #1a1816; --surface-2: #24211e; --ink: #f4efe8; --muted: #9a928a; --line: #2d2a27;
+    --a: #ff5a36; --b: #4d86ff; --good: #22c55e; --bad: #f43f5e; --warn: #f59e0b; --shadow: none; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e0d0c;
-  --surface: #1a1816;
-  --ink: #f4efe8;
-  --muted: #9a928a;
-  --line: #2d2a27;
-  --a: #ff5a36;
-  --a-soft: #3a1a12;
-  --b: #4d86ff;
-  --b-soft: #141f3a;
-  --shadow: none;
-  color-scheme: dark;
+  --bg: #0e0d0c; --surface: #1a1816; --surface-2: #24211e; --ink: #f4efe8; --muted: #9a928a; --line: #2d2a27;
+  --a: #ff5a36; --b: #4d86ff; --good: #22c55e; --bad: #f43f5e; --warn: #f59e0b; --shadow: none; color-scheme: dark;
 }
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; }
+html, body { margin: 0; min-height: 100%; }
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "Bricolage Grotesque", system-ui, -apple-system, sans-serif;
-  font-optical-sizing: auto;
-  -webkit-font-smoothing: antialiased;
-  overscroll-behavior: none;
+  background: var(--bg); color: var(--ink);
+  font-family: "Bricolage Grotesque", system-ui, -apple-system, sans-serif; font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; -webkit-text-size-adjust: 100%;
 }
 button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 3px solid var(--b); outline-offset: 2px; }
 .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .04em; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.label { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.spacer { flex: 1; }
+.hidden { display: none !important; }
 
 .app {
-  max-width: 560px;
-  margin: 0 auto;
-  min-height: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  max-width: 560px; margin: 0 auto; min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; gap: 12px;
   /* extra bottom room so Safari's floating toolbar never crowds the buttons */
   padding: max(12px, env(safe-area-inset-top)) 16px calc(env(safe-area-inset-bottom) + 40px);
-  gap: 12px;
 }
+@media (display-mode: standalone) { .app { padding-bottom: calc(env(safe-area-inset-bottom) + 14px); } }
+#view { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
 
-/* top bar */
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -.02em; }
 .brand i { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%); display: inline-block; }
-.top-right { display: flex; align-items: center; gap: 8px; }
-.count { color: var(--muted); white-space: nowrap; }
+.top h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.02em; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-right { display: flex; gap: 8px; }
 .icon-btn {
-  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
-  background: var(--surface); display: grid; place-items: center; padding: 0;
+  width: 40px; height: 40px; flex: none; border-radius: 11px; border: 1px solid var(--line);
+  background: var(--surface); display: grid; place-items: center; padding: 0; font-size: 18px; font-weight: 700;
 }
 .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn:disabled { opacity: .35; }
 
-/* chips */
-.chips {
-  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
-  margin: 0 -16px; padding: 2px 16px;
-  scroll-snap-type: x proximity;
+/* hub */
+.hub-intro { margin: 2px 0 0; font-size: 26px; line-height: 1.1; font-weight: 800; letter-spacing: -.025em; }
+.hub-intro span { color: var(--muted); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 18px; padding: 14px 14px 13px;
+  text-align: left; display: flex; flex-direction: column; gap: 4px; min-height: 128px; position: relative; overflow: hidden;
+  box-shadow: var(--shadow); transition: transform .12s ease;
 }
+.tile:active { transform: scale(.97); }
+.tile::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--c); }
+.tile .em { font-size: 30px; line-height: 1; margin: 4px 0 6px; }
+.tile .nm { font-weight: 800; font-size: 17px; letter-spacing: -.015em; line-height: 1.1; }
+.tile .tg { color: var(--muted); font-size: 13px; line-height: 1.3; }
+.tile .pl { position: absolute; top: 14px; right: 12px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); }
+.hub-foot { text-align: center; color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+
+/* controls */
+.btn {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 14px;
+  font-weight: 700; font-size: 15px; line-height: 1.15; min-height: 46px; transition: transform .1s ease, opacity .2s;
+}
+.btn:active:not(:disabled) { transform: scale(.98); }
+.btn:disabled { opacity: .4; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn.big { padding: 16px; font-size: 17px; border-radius: 16px; font-weight: 800; min-height: 56px; }
+.btn.good { background: var(--good); color: #fff; border-color: transparent; }
+.btn.bad, .btn.danger { background: var(--bad); color: #fff; border-color: transparent; }
+.btn.warn { background: var(--warn); color: #fff; border-color: transparent; }
+.btn.ghost { background: transparent; }
+.row { display: flex; gap: 8px; }
+.row > .btn { flex: 1; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+#view > .stack { flex: 1; min-height: 0; }
+.sticky-go { position: sticky; bottom: calc(env(safe-area-inset-bottom) + 12px); z-index: 3; box-shadow: 0 0 0 10px var(--bg), 0 -14px 18px 6px var(--bg); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; padding: 9px 6px; border-radius: 9px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; flex: none; }
 .chips::-webkit-scrollbar { display: none; }
+.chips.wrap { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; }
 .chip {
-  flex: none; border: 1px solid var(--line); background: var(--surface);
-  border-radius: 999px; padding: 7px 12px; font-size: 14px; font-weight: 600;
-  display: inline-flex; align-items: center; gap: 6px; scroll-snap-align: start;
+  flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 12px;
+  font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
 }
 .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
 .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-/* mode switch */
-.modes { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
-.modes button { border: 0; background: none; padding: 8px; border-radius: 9px; font-weight: 600; font-size: 14px; color: var(--muted); }
-.modes button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.players { display: none; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 14px; }
-.app.group .players { display: flex; }
-.stepper { display: flex; align-items: center; gap: 4px; }
-.stepper button { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
-.stepper output { min-width: 28px; text-align: center; font-weight: 700; color: var(--ink); }
-
-/* card */
-.stage { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; touch-action: pan-y; }
-.meta { display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
-.cat-tag { display: inline-flex; align-items: center; gap: 6px; }
-.cat-tag .dot { width: 8px; height: 8px; border-radius: 50%; }
-.prompt { font-size: 15px; font-weight: 600; color: var(--muted); margin: 0; }
-
-.choices { flex: 1; display: flex; flex-direction: column; gap: 0; position: relative; min-height: 340px; }
-.opt {
-  flex: 1; border: 0; text-align: left; border-radius: 22px;
-  padding: 22px 22px 36px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
-  font-size: clamp(21px, 5.6vw, 27px); line-height: 1.18; font-weight: 700; letter-spacing: -.015em;
-  transition: transform .18s ease, opacity .25s ease, filter .25s ease, background-color .25s ease;
-  position: relative; overflow: hidden;
+.input {
+  font: inherit; font-size: 16px; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); width: 100%; min-width: 0;
 }
-.opt .lbl { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; opacity: .8; }
-.opt.a { background: var(--a); color: var(--on-accent); }
-.opt.b { background: var(--b); color: var(--on-accent); justify-content: flex-start; padding: 36px 22px 22px; }
-.opt.b .lbl { order: 2; }
-.opt:active { transform: scale(.985); }
-.opt:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-.or {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: 52px; height: 52px; border-radius: 50%; background: var(--bg); color: var(--ink);
-  display: grid; place-items: center; font-weight: 800; font-size: 15px; z-index: 2;
-  border: 6px solid var(--bg); box-shadow: 0 0 0 1px var(--line);
-}
-.choices .gap { height: 8px; flex: none; }
+.input:focus { outline: 2px solid var(--b); outline-offset: 0; border-color: transparent; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); font-weight: 600; font-size: 15px; }
+.toggle input { width: 22px; height: 22px; accent-color: var(--ink); flex: none; }
 
-.choices.decided { flex: none; min-height: 0; }
-.choices.decided .opt { pointer-events: none; font-size: clamp(17px, 4.4vw, 21px); padding: 16px 18px 26px; gap: 6px; flex: none; }
-.choices.decided .opt.b { padding: 26px 18px 16px; }
-.choices.decided .or { width: 42px; height: 42px; font-size: 13px; border-width: 5px; }
-.app.answered .modes, .app.answered .players { display: none; }
-.panel p { font-size: 17px; }
-@media (hover: none) { .opt .keys { display: none; } }
-.choices.decided .opt:not(.picked) { opacity: .28; filter: saturate(.3); }
-.opt .check { position: absolute; right: 18px; top: 18px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.22); display: none; place-items: center; }
-.opt.picked .check { display: grid; }
-.opt .check svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.opt .bar { position: absolute; left: 0; bottom: 0; height: 5px; background: rgba(255,255,255,.55); width: 0; transition: width .6s cubic-bezier(.2,.8,.2,1); }
-.opt.b .bar { top: 0; bottom: auto; }
-
-/* twist + group reveal */
-.panel {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px;
-  box-shadow: var(--shadow); display: none; animation: up .22s ease;
+/* cards */
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 20px;
+  box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
 }
-.panel.show { display: block; }
-@keyframes up { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
-.panel h3 { margin: 0 0 2px; font-size: 12px; font-family: "JetBrains Mono", monospace; font-weight: 500; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
-.panel p { margin: 0 0 12px; font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: -.01em; }
-.row { display: flex; gap: 8px; }
-.btn {
-  flex: 1; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 11px 12px;
-  font-weight: 700; font-size: 15px;
-}
-.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.split { display: flex; height: 10px; border-radius: 99px; overflow: hidden; margin: 6px 0 8px; background: var(--line); }
-.split span { display: block; height: 100%; transition: width .5s ease; }
-.split-legend { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); margin-bottom: 12px; }
-.split-legend b { color: var(--ink); }
-
-/* pass screen */
-.pass {
-  position: fixed; inset: 0; background: var(--ink); color: var(--bg); z-index: 20;
-  display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px;
-}
-.pass.show { display: flex; }
-.pass .who { font-size: 44px; font-weight: 800; letter-spacing: -.03em; }
-.pass .sub { opacity: .7; font-size: 16px; max-width: 28ch; }
-.pass button { margin-top: 10px; border: 0; background: var(--bg); color: var(--ink); border-radius: 14px; padding: 14px 28px; font-weight: 800; font-size: 17px; }
-
-/* bottom bar */
+.card .big { font-size: clamp(24px, 6.6vw, 33px); font-weight: 800; line-height: 1.12; letter-spacing: -.022em; margin: 0; overflow-wrap: anywhere; }
+.card .lead { font-size: 16px; font-weight: 700; color: var(--muted); margin: 0; }
+.card.fill { flex: 1; justify-content: center; min-height: 260px; }
+.meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); }
+.tag { display: inline-flex; align-items: center; gap: 6px; }
+.tag .dot { width: 8px; height: 8px; border-radius: 50%; }
 .bottom { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
-.next { border: 0; background: var(--ink); color: var(--bg); border-radius: 14px; padding: 14px; font-weight: 800; font-size: 16px; }
-.hint { text-align: center; color: var(--muted); font-size: 12px; margin: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); animation: up .22s ease; }
+@keyframes up { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+.pop { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
+.scores { display: flex; flex-direction: column; gap: 6px; }
+.score-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-weight: 700; }
+.score-row .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score-row .s { font-family: "JetBrains Mono", monospace; font-size: 15px; }
+.score-row.lead { border-color: var(--ink); }
+.big-num { font-size: 64px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.center { text-align: center; align-items: center; }
+.players-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 10px 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.players-bar .who { min-width: 0; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.players-bar .btn { min-height: 36px; padding: 7px 12px; font-size: 14px; flex: none; }
+.timerbar { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; flex: none; }
+.timerbar span { display: block; height: 100%; background: var(--ink); width: 100%; transform-origin: left; }
+
+/* overlays */
+.full {
+  position: fixed; inset: 0; z-index: 40; background: var(--bg); color: var(--ink); display: flex; flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 24px) max(16px, env(safe-area-inset-left));
+  touch-action: manipulation; overscroll-behavior: contain;
+}
+.full-x { position: absolute; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); z-index: 5; }
+.pass {
+  position: fixed; inset: 0; background: var(--ink); color: var(--bg); z-index: 60; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 24px calc(env(safe-area-inset-bottom) + 40px);
+}
+.pass-who { font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; overflow-wrap: anywhere; }
+.pass-sub { opacity: .72; font-size: 16px; max-width: 30ch; }
+.pass-go { margin-top: 12px; border: 0; background: var(--bg); color: var(--ink); border-radius: 16px; padding: 16px 30px; font-weight: 800; font-size: 17px; min-width: 200px; }
+.sheet-wrap { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.45); display: flex; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity .18s; }
+.sheet-wrap.show { opacity: 1; }
+.sheet {
+  width: 100%; max-width: 560px; max-height: 88dvh; overflow-y: auto; background: var(--bg); border-radius: 22px 22px 0 0;
+  padding: 10px 18px calc(env(safe-area-inset-bottom) + 28px); transform: translateY(24px); transition: transform .2s ease; display: flex; flex-direction: column; gap: 12px;
+}
+.sheet-wrap.show .sheet { transform: none; }
+.sheet-grip { width: 40px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 4px; flex: none; }
+.sheet-title { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+.sheet-body { font-size: 16px; line-height: 1.45; }
+.sheet-body ol, .sheet-body ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.sheet-actions { display: flex; gap: 8px; }
+.sheet-actions .btn { flex: 1; }
+.pe { display: flex; flex-direction: column; gap: 8px; }
+.pe-list { display: flex; flex-direction: column; gap: 6px; }
+.pe-row { display: flex; align-items: center; gap: 8px; }
+.pe-n { width: 18px; color: var(--muted); text-align: right; flex: none; }
 .toast {
-  position: fixed; left: 50%; bottom: calc(112px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 10px; font-size: 14px; font-weight: 600;
-  opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 30;
+  position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 11px; font-size: 14px; font-weight: 700;
+  opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 90; max-width: calc(100vw - 32px); text-align: center;
 }
 .toast.show { opacity: 1; }
+.countdown { position: absolute; inset: 0; display: grid; place-items: center; font-size: 120px; font-weight: 800; letter-spacing: -.05em; z-index: 4; background: inherit; }
+.noscript { padding: 40px 20px; text-align: center; }
 
-@media (display-mode: standalone) { .app { padding-bottom: calc(env(safe-area-inset-bottom) + 14px); } }
-@media (min-height: 820px) { .choices { min-height: 440px; } }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (min-width: 520px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <header class="top">
-    <div class="brand"><i></i>Line Brain</div>
-    <div class="top-right">
-      <span class="count mono" id="count">0 answered</span>
-      <button class="icon-btn" id="themeBtn" aria-label="Toggle light or dark">
-        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
-      </button>
-    </div>
-  </header>
-
-  <nav class="chips" id="chips" aria-label="Categories"></nav>
-
-  <div class="modes" role="group" aria-label="Mode">
-    <button id="soloBtn" aria-pressed="true">Solo</button>
-    <button id="groupBtn" aria-pressed="false">Pass the phone</button>
-  </div>
-  <div class="players">
-    <span>Players in line with you</span>
-    <div class="stepper">
-      <button id="minus" aria-label="Fewer players">−</button>
-      <output id="pc">3</output>
-      <button id="plus" aria-label="More players">+</button>
-    </div>
-  </div>
-
-  <main class="stage" id="stage">
-    <div class="meta">
-      <span class="cat-tag mono" id="catTag"><span class="dot"></span><span></span></span>
-      <span class="mono" id="left"></span>
-    </div>
-    <p class="prompt">Would you rather…</p>
-    <div class="choices" id="choices">
-      <button class="opt a" id="optA"><span class="lbl">A<span class="keys"> · ← or 1</span></span><span class="txt"></span><span class="check"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><span class="bar"></span></button>
-      <div class="gap"></div>
-      <button class="opt b" id="optB"><span class="lbl">B<span class="keys"> · → or 2</span></span><span class="txt"></span><span class="check"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><span class="bar"></span></button>
-      <div class="or" aria-hidden="true">OR</div>
-    </div>
-
-    <section class="panel" id="twist" aria-live="polite">
-      <h3>Okay, but now</h3>
-      <p id="twistText"></p>
-      <div class="row">
-        <button class="btn" id="keepBtn">Still picking it</button>
-        <button class="btn" id="switchBtn">I'd switch</button>
-      </div>
-    </section>
-
-    <section class="panel" id="reveal" aria-live="polite">
-      <h3>The line has spoken</h3>
-      <div class="split"><span id="splitA" style="background:var(--a)"></span><span id="splitB" style="background:var(--b)"></span></div>
-      <div class="split-legend"><span><b id="nA">0</b> picked A</span><span><b id="nB">0</b> picked B</span></div>
-      <p id="revealText"></p>
-    </section>
-  </main>
-
-  <footer>
-    <div class="bottom">
-      <button class="icon-btn" id="backBtn" aria-label="Previous question"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <button class="next" id="nextBtn">Skip</button>
-      <button class="icon-btn" id="shareBtn" aria-label="Share this question"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg></button>
-    </div>
-  </footer>
+  <header class="top" id="top"></header>
+  <main id="view"></main>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><div class="noscript">Line Brain needs JavaScript turned on.</div></noscript>
 
-<div class="pass" id="pass">
-  <div class="sub" id="passSub">Hand the phone over. No peeking.</div>
-  <div class="who" id="passWho">Player 1</div>
-  <button id="passGo">I'm ready</button>
-</div>
-<div class="toast" id="toast"></div>
-
-<script>
-const CATS = {
-  pocket: { name: "Out of Pocket", color: "#ff3d6e" },
-  brain:  { name: "Big Brain",     color: "#7c5cff" },
-  moral:  { name: "Moral Damage",  color: "#f59e0b" },
-  life:   { name: "Life Path",     color: "#10b981" },
-  social: { name: "Social Risk",   color: "#06b6d4" },
-  chaos:  { name: "Unhinged",      color: "#a3e635" },
-};
-
-// [category, option A, option B, twist if you picked A, twist if you picked B]
-// Each twist is aimed at the option you picked, to make keeping it harder.
-const Q = [
-  // ---------- OUT OF POCKET ----------
-  ["pocket","Have every text you've ever sent printed and mailed to your boss","Have every thought you have for 24 hours read aloud to your family",
-    "The printout is also taped up in the break room. HR reads it before your boss does.",
-    "The 24 hours land on a family funeral, and everyone is in the same room as you."],
-  ["pocket","Have your camera roll projected at your own funeral","Have your search history engraved on your tombstone",
-    "It's on shuffle, hidden and deleted folders included, and your grandparents are in the front row.",
-    "It's your search history from age 13 to 19, and the cemetery gives walking tours."],
-  ["pocket","Have your parents host a podcast about your dating life with 2 million listeners","Have your most recent ex get a weekly newspaper column about you",
-    "Your parents bring each of your exes on as a guest. Season 1 is already recorded.",
-    "Your current (or next) partner is the column's editor and approves every word."],
-  ["pocket","Accidentally like your ex's photo from 2014 every single morning","Accidentally text \"love you\" to your boss once a week",
-    "Your ex's new partner screenshots every like and posts a running tally.",
-    "Your boss starts replying \"love you too.\" Last week it went to the whole company."],
-  ["pocket","Have a laugh track play after everything you say","Have sad violin music play, audible to everyone, whenever you're upset",
-    "It also plays when you deliver bad news. Breakups. Condolences. Layoffs.",
-    "It kicks in when you're slightly annoyed too. Slow walkers. Self-checkout. This line."],
-  ["pocket","Make your full browser history public with your name on it","Make your full bank statements public with your name on it",
-    "Incognito included, sorted by time of day.",
-    "Every Venmo note. Every 2 a.m. food order. Every subscription you forgot about."],
-  ["pocket","Have your mom as your only follower, commenting on everything","Have your entire high school class see every post you make, forever",
-    "She also reads every comment thread aloud at her book club.",
-    "Your high school bully gets to pin one comment on every post."],
-  ["pocket","Have your sleep-talking livestreamed nightly","Have your dreams uploaded to YouTube every morning",
-    "Your partner (or future partner) is the top commenter.",
-    "The algorithm pushes them to everyone you went to high school with."],
-  ["pocket","Be stuck in an elevator for 3 hours with your ex and their new partner","Be stuck in an elevator for 3 hours with your boss while you have food poisoning",
-    "They spend the whole 3 hours arguing about you.",
-    "It's your first day, and your boss is the CEO."],
-  ["pocket","Have your friends publicly rank all your exes","Have all your exes publicly rank you",
-    "Your current partner is on the list, and they come in last.",
-    "They compare notes in a group chat first, and you're in it."],
-  ["pocket","Wear your exact 7th grade outfit to your next job interview","Have your 7th grade self conduct your next job interview",
-    "It's your dream job, and they record every interview.",
-    "Your 7th grade self also decides whether you keep your current job."],
-  ["pocket","Lick the escalator handrail at the mall","Drink one full glass of water from a public pool in August",
-    "It's an airport escalator in flu season, and you lick the whole way down.",
-    "It comes from the kiddie pool at a water park on the 4th of July."],
-  ["pocket","Have your entire group chat history read out at your wedding","Have your best friend give your wedding speech after 9 drinks with no notes",
-    "Your new in-laws read it aloud, and that includes the thread about them.",
-    "They also keep the microphone for the whole reception."],
-  ["pocket","Have your phone randomly call your crush once a day for 10 seconds","Have your phone randomly post your last photo to your story once a week",
-    "Sometimes the call goes out at 3 a.m., and they hear whatever you're doing.",
-    "Screenshots count as photos."],
-  ["pocket","Every time you lie, you sneeze loudly","Every time someone compliments you, you burp",
-    "Polite lies count. \"I love it.\" \"I'm fine.\" \"Happy for you.\"",
-    "That includes compliments on first dates, in job interviews, and in your wedding vows."],
-  ["pocket","Be caught singing alone in your car by your crush every week","Have your crush hear you talking to yourself, once, at your worst",
-    "They film it every time, and it's turning into a series.",
-    "You were talking about them, by name, for a long time."],
-  ["pocket","Have your therapist's notes about you leak to your friends","Have your friends' honest notes about you leak to your therapist",
-    "The notes include everything you've said about those exact friends.",
-    "Your therapist reads them, then quietly agrees in every session."],
-  ["pocket","Find out exactly what your partner's ex says about you","Find out exactly what your own ex says about you",
-    "Your partner agrees with about half of it.",
-    "It's the exact version they told everyone you both know."],
-  ["pocket","Have everyone see your screen time report, broken down by app","Have everyone see your Spotify listening history from your worst breakup",
-    "It shows how many hours you spent on one specific person's profile.",
-    "Timestamps included, like the song you played 47 times between 2 and 4 a.m."],
-  ["pocket","Show up to a funeral dressed for a costume party","Show up to a costume party dressed for a funeral and stay in character all night",
-    "You're dressed as a clown, and you're giving the eulogy.",
-    "Your character is the grieving widow, and the host doesn't know it's a bit."],
-  ["pocket","Have your future kid read every message you sent at 16","Have your 16-year-old self read every message you send today",
-    "They read them at 16 and quote them back at you during every fight.",
-    "Your 16-year-old self also gets to text your current boss once."],
-  ["pocket","Smell your own breath, constantly, forever","Smell everyone else's breath, constantly, forever",
-    "Everyone around you smells it at the same strength you do.",
-    "That includes every date, every kiss, and every dentist."],
-  ["pocket","Get roasted on stage by a pro comedian who knows all your secrets","Roast your own family on stage while they sit in the front row",
-    "It's televised, and your family and your boss are in the audience.",
-    "Afterward your family roasts you back, with a professional writer."],
-  ["pocket","Have your current location shared live with every ex","Have every ex's current location shared live with you, forever",
-    "Your current partner gets a ping every time an ex checks it.",
-    "One night, one of them is parked outside your place."],
-  ["pocket","Say yes to the next 10 things anyone asks you","Say no to the next 10 things the people you love ask you",
-    "The first ask is from the stranger reading this over your shoulder.",
-    "One of the 10 is your best friend asking you to be in their wedding."],
-  ["pocket","Have a stranger read your journal out loud on a train","Have your dad read your journal silently, and never mention it",
-    "It's your daily commute, and the stranger rides it every day.",
-    "You catch him re-reading one page, and it's the worst one."],
-
-  // ---------- BIG BRAIN ----------
-  ["brain","Use a teleporter that destroys you and builds a perfect copy at your destination, every day","Have a 2-hour commute each way, forever",
-    "Sometimes it glitches and doesn't destroy the original. Now there are two of you, and one has to go.",
-    "It's a packed bus with no signal. That's 1,000 hours a year, every year."],
-  ["brain","Take only the mystery box (a perfect predictor put $1M in it only if it predicted you'd take it alone)","Take both boxes: the mystery box plus a guaranteed $1,000",
-    "The predictor decided yesterday, and nothing you do now changes what's in the box. You're leaving $1,000 on the table.",
-    "Everyone who's taken both boxes so far, all 1,000 of them, walked away with exactly $1,000."],
-  ["brain","Know for certain we're in a simulation","Never know, but probably not in one",
-    "You also find out it's someone's school project, and it's due Friday.",
-    "Everyone else gets told for sure. You're the only one who doesn't know."],
-  ["brain","Be the smartest person in a mediocre world","Be the least smart person in a world of geniuses",
-    "Nobody can follow what you say, including the people you love.",
-    "They're kind about it, which is worse. They slow down when they talk to you."],
-  ["brain","Have perfect memory of everything you've ever experienced","Be able to permanently forget anything you choose",
-    "That's every argument word for word, and every face someone made when you let them down.",
-    "You don't remember what you erased or why. You might have done it already."],
-  ["brain","Go back to 1500 with a modern phone (offline, solar charger)","Go forward to 2500 with nothing but the clothes you're wearing",
-    "You land in Europe during a plague, speaking modern English. A glowing rectangle looks a lot like witchcraft.",
-    "In 2500, people from the past get kept in a museum, a nice one, for life."],
-  ["brain","Upload your mind to a computer right before you die","Die naturally, and that's that",
-    "The company that owns the servers was just bought by an ad company.",
-    "Your whole family uploads. You're the only one who doesn't."],
-  ["brain","Know the answer to any question, but never know how you know","Learn anything perfectly, but only one subject per year",
-    "You can never show your work, so no one ever believes you, even when it matters.",
-    "That's maybe 50 subjects in a lifetime, and you have to pick the first one before the line moves."],
-  ["brain","Prove irrefutably that God exists, but never be able to share the proof","Prove irrefutably that God doesn't exist, but never be able to share the proof",
-    "You also learn that God is disappointed in you specifically.",
-    "Everyone you love still believes. You sit through every prayer knowing."],
-  ["brain","Have a pause button for the world","Have a rewind button that goes back exactly 10 seconds",
-    "You keep aging while it's paused. Nobody else does.",
-    "You're the only one who remembers the rewound version, every time."],
-  ["brain","Know the exact number of people who secretly dislike you","Know exactly who they are, but not how many there are total",
-    "It's 41, and you'll guess at it for the rest of your life.",
-    "The first name is your best friend. The second is one of your parents."],
-  ["brain","Change one moment in history","Learn the complete truth about every moment in history, but change nothing",
-    "You can't predict the ripple. There's a 1 in 3 chance you erase someone you love.",
-    "The truth includes what really happened to someone you lost, and it wasn't an accident."],
-  ["brain","Live 1,000 years as yourself","Experience every human's life, all at once, for one second",
-    "Everyone you love dies on a normal schedule, and you go through that about 15 times.",
-    "That second includes every war, every famine, and every worst last moment ever lived."],
-  ["brain","Be a genius artist who's only recognized after you die","Be a mediocre artist who's famous right now",
-    "You die poor at 41, with a basement full of work nobody has seen.",
-    "Everyone keeps calling the dead artist the real genius, and you know they're right."],
-  ["brain","Live in a world where everyone's salary is public","Live in a world where everyone's medical history is public",
-    "On day one you learn the coworker who does half your work makes 40% more.",
-    "That includes mental health records, and employers check them before they hire."],
-  ["brain","Understand why there's something rather than nothing, but lose the ability to feel wonder","Never know, and keep wondering forever",
-    "The answer is boring. It fits in one sentence.",
-    "Everyone else finds out the day after you die."],
-  ["brain","See 10 seconds into the future","Remember the last 10 years with perfect detail",
-    "You see every accident 10 seconds ahead, and you can stop almost none of them.",
-    "That's every breakup, every funeral, and every humiliation, in 4K."],
-  ["brain","Have every decision you make be mathematically optimal, but never feel like it was yours","Make your own messy decisions and own the consequences",
-    "It picks who you marry, and it isn't who you would have picked.",
-    "Within 5 years, one of your messy choices wrecks something big."],
-  ["brain","Be the only person on Earth who can't lie","Be the only person on Earth who can lie",
-    "Everyone knows you can't lie. Your boss, your mom, and your partner start asking you everything.",
-    "Everyone believes you, every time, and you can feel it changing who you are."],
-  ["brain","Know your exact date of death","Know exactly how you'll die, but not when",
-    "It's 9 years from today.",
-    "It's drowning, and you live near the ocean."],
-  ["brain","Have your personality become the literal average of the 5 people you spend the most time with","Have your personality frozen exactly as it is today, forever",
-    "It's averaged from the 5 people you spend the most time with right now.",
-    "Frozen as you are right now, in this line, in this mood."],
-  ["brain","Solve one major unsolved problem in science, but nobody believes it was you","Get full credit for a discovery you didn't make, and know it forever",
-    "The person who gets the credit is someone you can't stand, and they give TED talks about it.",
-    "The real discoverer is broke, and they email you once a year."],
-  ["brain","Live forever, healthy at 30, knowing you'll eventually outlive the Sun","Live a normal 85 years",
-    "You can never opt out, not even after Earth is gone.",
-    "Everyone else you know takes the forever option."],
-  ["brain","Speak every human language fluently","Understand every animal, but they're mostly complaining",
-    "You also understand every insult muttered about you, in any language, anywhere.",
-    "Your pets mostly complain about you."],
-  ["brain","Forget every book you read the moment you finish it","Remember every bad movie you've ever seen in full, scene-by-scene detail",
-    "Starting today, that includes textbooks, manuals, and contracts.",
-    "They play in your head whenever it's quiet."],
-  ["brain","Be the first person to meet alien life, and they're hostile","Be the last generation to never know if aliens exist",
-    "They judge all of Earth on how that first meeting goes, and that meeting is you.",
-    "Your kids find out the year after you die."],
-  ["brain","Have time move 2x faster when you're happy","Have time move 2x slower when you're bored",
-    "Your best days feel like 20 minutes, and your wedding feels like a lunch break.",
-    "This line just got twice as long."],
-  ["brain","Instantly master any skill by watching it once, but forget it after a week","Master one skill completely, slowly, over 10 years, and keep it forever",
-    "You'll never know anything long enough to be anyone's go-to person.",
-    "You have to name the skill right now, before the line moves."],
-  ["brain","Have a clone of you that does your job while you do whatever you want (it gets the credit)","Do everything yourself and get credit for all of it",
-    "The clone gets promoted, and your partner starts preferring to talk to it.",
-    "No days off for the next 5 years."],
-
-  // ---------- MORAL DAMAGE ----------
-  ["moral","Pull the lever: 1 stranger dies, 5 strangers live","Do nothing: 5 strangers die, 1 lives, and you never touched it",
-    "The one person is a kid, and they're looking right at you.",
-    "The five can see you standing at the lever, and they're begging."],
-  ["moral","Live in a perfect city whose happiness depends on one child suffering in secret","Leave forever and walk into the unknown",
-    "Everyone has to visit the child once a year, you included.",
-    "Everyone you love stays in the city. None of them come with you."],
-  ["moral","Plug into a machine that gives you a perfect simulated life you'll believe is real","Stay in your real, flawed life",
-    "The people you love in real life watch your body lie there for 50 years.",
-    "Your real life has one major loss coming in the next year, guaranteed."],
-  ["moral","Save your own dog from drowning","Save a stranger you've never met from drowning",
-    "The stranger is a kid, and their parent watches you swim to the dog.",
-    "Your dog watches you swim past."],
-  ["moral","Tell your best friend their partner is cheating, and blow up the friend group","Stay quiet forever and watch them get married",
-    "Your best friend doesn't believe you and picks the partner.",
-    "They ask you to give the toast."],
-  ["moral","Get $10M, but one random stranger somewhere loses their life savings","Get nothing, and nobody loses anything",
-    "It's a retired teacher in your city, and you'll see the local news story.",
-    "$10M would clear your parents' debt and cover your own medical bills, forever."],
-  ["moral","Turn in your sibling for a serious crime","Lie under oath to protect them",
-    "Your parents never speak to you again.",
-    "The victim's family is in the courtroom, watching you while you lie."],
-  ["moral","Find out your partner cheated once, 5 years ago, and never again","Never find out",
-    "You find out at your 10th anniversary dinner, from their best friend.",
-    "Everyone else in your life already knows."],
-  ["moral","Let 10 guilty people go free","Send 1 innocent person to prison",
-    "One of the 10 hurt someone you love.",
-    "The innocent person is your age, and they get 20 years."],
-  ["moral","Save one child in front of you today","Anonymously donate enough to save 10 children you'll never meet",
-    "The 10 are just as real, and you can look up their names afterward.",
-    "The child in front of you is screaming, and you have to walk away from them to make the donation."],
-  ["moral","Report a coworker who's stealing to feed their kids","Stay quiet and risk losing your own job if it comes out",
-    "They get fired and charged. Their kids are 4 and 7.",
-    "It comes out, and you're named as the person who knew."],
-  ["moral","Have everyone you love forget you exist","Forget everyone you love",
-    "You still remember all of them. They look right through you.",
-    "They all remember you, and they keep trying to remind you who they are."],
-  ["moral","Secretly take credit for a friend's idea that makes you millions (they never find out)","Give them the idea back and stay broke",
-    "They stay broke, and they toast to your success at every dinner.",
-    "They're bad at business and run it into the ground in a year anyway."],
-  ["moral","Have a long life without ever being in love","Have a short life with one great love",
-    "You'll be happy, with friends, family, and work, and you'll always wonder.",
-    "Short means 34, and you meet them at 30."],
-  ["moral","Bring back someone you've lost, for one more day","Never have met them, and never feel the loss",
-    "They don't know it's only one day, and you have to decide whether to tell them.",
-    "Every lesson and laugh with them goes too, along with the part of you they shaped."],
-  ["moral","Erase your worst memory, plus everything you learned from it","Keep it, and everything it taught you",
-    "You'll probably make the same mistake again.",
-    "It replays in full on the anniversary every year."],
-  ["moral","Have a guaranteed happy but completely ordinary kid","Have an extraordinary kid who struggles their whole life",
-    "Happy, and they never do one thing that makes you proud in a way you can explain.",
-    "They change the world, and they blame you for every bit of the struggle."],
-  ["moral","Keep a lost wallet with $2,000 cash belonging to a billionaire","Return it, knowing they won't even notice",
-    "It isn't the billionaire's. It belongs to a server who just finished a double shift.",
-    "You're $800 short on rent, and it's due Friday."],
-  ["moral","Know when every person you meet will die","Know how every person you meet truly feels about you",
-    "Your partner's date is in 3 years, and you can't tell them.",
-    "Your mom feels about you the way she did when you were 15."],
-  ["moral","Serve 2 years in prison for something you didn't do","Let your memories be fully searched by a court to prove your innocence",
-    "You miss your best friend's wedding and the birth of your first niece or nephew.",
-    "Everything they find goes into the public court record."],
-  ["moral","Give up 10 years of your life to add 10 years to a stranger's","Keep your years, and know you could've done it",
-    "They come off the end of your life, and those were the years with grandkids.",
-    "You meet the stranger a week later. They're 19, and they're in hospice."],
-  ["moral","Be paid $1M to never speak to your best friend again","Turn it down, then lose them anyway to a falling-out a year later (you don't know which)",
-    "They're never told why. They think you just stopped caring.",
-    "The falling-out is your fault, and you know it the whole time."],
-  ["moral","Have the world know every good thing you've done","Have the world know every bad thing you've done, and be forgiven for it",
-    "They also learn the selfish reason behind each one.",
-    "You're forgiven, but no one forgets, and it comes up every holiday."],
-  ["moral","Live with someone else's guilty secret, and never be able to tell","Have your own worst secret quietly known by one person who'll never mention it",
-    "The secret is about your partner.",
-    "The one person is your boss."],
-  ["moral","Be a hero no one remembers","Be remembered forever as a villain for something you didn't do",
-    "Someone else takes the credit and builds their whole life on it.",
-    "Your own family believes it too."],
-
-  // ---------- LIFE PATH ----------
-  ["life","Do your dream job for $40k a year","Do a job you hate for $400k a year",
-    "You live where rent is $2,400 a month.",
-    "You're locked in for 15 years, with no quitting."],
-  ["life","Restart your life at 10 years old with everything you know now","Get $5M right now and keep your current age",
-    "You have to do middle school again with an adult brain, and nobody listens to a 10-year-old.",
-    "Everyone in your life finds out, and every one of them asks for some."],
-  ["life","Live in the same town as everyone you love, forever","Live anywhere in the world, but alone",
-    "It's the town you grew up in, and you never get a vacation.",
-    "Alone means no new friends and no visits from home."],
-  ["life","Have one true best friend","Have 50 good friends and no best friend",
-    "They move across the world next year.",
-    "When you end up in the hospital, nobody is your first call."],
-  ["life","Love your job but hate everyone you work with","Hate your job but love everyone you work with",
-    "Every one of them gets promoted above you.",
-    "They're all quitting next month."],
-  ["life","Peak in your 20s","Peak in your 60s",
-    "For the next 50 years, you get introduced as who you used to be.",
-    "By the time you get there, everyone who doubted you is gone."],
-  ["life","Never travel more than 100 miles from home","Never be allowed to go back home",
-    "Your best friend moves 200 miles away, and your sibling's wedding is overseas.",
-    "One of your parents gets sick back home."],
-  ["life","Perfect health until exactly 70, then die in your sleep","Average health until 95",
-    "Your first grandkid is born the year you turn 70.",
-    "Average means the last 15 years are back pain, pills, and forgetting names."],
-  ["life","Win an Olympic gold medal","Win a Nobel Prize",
-    "You peak at 23, and nobody ever asks what you did next.",
-    "Your discovery gets turned into a weapon."],
-  ["life","Work 4 days a week for 70% of your pay","Work 6 days a week for 150% of your pay",
-    "Prices go up 20% next year, and you're already at the edge.",
-    "Your kid, or future kid, gets one full day a week with you."],
-  ["life","Never feel physical pain again","Never feel embarrassment again",
-    "You don't notice a burn, a broken bone, or a heart attack until someone else points it out.",
-    "Embarrassment is what stops you from saying the worst thing at the worst moment. That's gone too."],
-  ["life","Be extremely good-looking but boring","Be plain-looking but magnetic",
-    "People stop listening to you after 10 minutes, and eventually that includes your partner.",
-    "No one notices you walk in. You start every room from zero."],
-  ["life","Know everything that will happen in your life","Never be able to plan anything more than one day ahead",
-    "That includes every loss, with its date.",
-    "No planned weddings, no trips, and no planned kids. Only today."],
-  ["life","Be 10 minutes late to everything","Be 45 minutes early to everything",
-    "That includes your own wedding and every flight.",
-    "That includes every first date. You're always the one waiting, and they always notice."],
-  ["life","Give up music for life","Give up every show and movie for life",
-    "No music at your wedding, at funerals, or in the car. Ever.",
-    "That includes the show you're halfway through and every one your friends talk about."],
-  ["life","Be famous, but never trust anyone's intentions again","Be anonymous, and fully trust the 5 people who know you",
-    "Your own family starts selling stories about you.",
-    "One of the 5 dies within 10 years."],
-  ["life","Text your 15-year-old self one sentence","Get one sentence from your 60-year-old self",
-    "Your 15-year-old self ignores it, which is exactly what you would have done.",
-    "The sentence is just \"Don't.\" No context."],
-  ["life","Live in a mansion in a city you hate","Live in a studio apartment in your favorite city",
-    "You can never leave it, not even on vacation.",
-    "The studio is 280 square feet, and you're still in it at 45."],
-  ["life","Retire at 35 with enough to get by","Retire at 65 rich",
-    "Getting by means one bad emergency wipes you out.",
-    "There's a 1 in 3 chance your health goes before 65."],
-  ["life","Be truly great at one thing","Be pretty good at everything",
-    "Nobody pays for that one thing.",
-    "You're never the best at anything, and never the person anyone calls first."],
-  ["life","Know your soulmate's name but not when you'll meet","Meet them for sure, but not know it's them until 10 years in",
-    "It's a really common name, and you meet hundreds of them.",
-    "You almost break up 3 times in those 10 years."],
-  ["life","Live a life where everything goes right but nothing surprises you","Live a life full of surprises, half of them bad",
-    "You'll know every gift, every proposal, and every punchline in advance, forever.",
-    "One of the bad surprises is big, and it arrives within a year."],
-
-  // ---------- SOCIAL RISK ----------
-  ["social","Hear everything your friends say about you behind your back","Have your friends hear everything you say about them behind theirs",
-    "It starts with what they said last night.",
-    "That includes the group chat they aren't in."],
-  ["social","Make your group chat public","Make your private DMs public",
-    "Every name stays on, including the person you were roasting.",
-    "Deleted messages included."],
-  ["social","Be the funniest person in every room","Be the smartest person in every room",
-    "Nobody takes you seriously, even when you're scared.",
-    "Nobody invites you to anything casual again."],
-  ["social","Be unable to leave any party until you're the last guest","Have to leave every party after exactly 20 minutes",
-    "That includes parties at your ex's place.",
-    "That includes your own wedding reception."],
-  ["social","Be honest with everyone, about everything, for a full week","Have to lie to everyone, about everything, for a full week",
-    "That week includes your mom's birthday and your performance review.",
-    "That includes your doctor, and your partner asking if you love them."],
-  ["social","Be loved by everyone but truly understood by no one","Be fully understood by one person and ignored by everyone else",
-    "Your partner never knows the real you either.",
-    "That one person moves on in 10 years."],
-  ["social","Have your crush find out you like them via a highway billboard","Have them never find out",
-    "It's on their commute for a month, with your face on it.",
-    "They liked you too, and you hear about it 10 years later."],
-  ["social","Have everyone you've ever met get a notification when you think about them","Get a notification every time someone thinks about you",
-    "Exes included, especially at 2 a.m.",
-    "Each notification comes with a one-line preview of the thought."],
-  ["social","Only be able to communicate through voice memos","Have every text you send read aloud by a robot voice to everyone near the recipient",
-    "One take each. No re-recording.",
-    "The robot reads them in your mom's voice."],
-  ["social","Be best friends with your boss","Be bosses with your best friend",
-    "They have to fire you next year.",
-    "You have to fire them next year."],
-  ["social","Always say exactly what you're thinking when someone asks \"what's on your mind?\"","Never be able to ask anyone a question again",
-    "Your partner asks it every night before bed.",
-    "That includes \"Are you okay?\" and \"Will you marry me?\""],
-  ["social","Have every first date go perfectly, but never get a second one","Have every first date be a disaster, but the person always wants a second",
-    "One of them was your soulmate.",
-    "They also tell all their friends about the disaster."],
-  ["social","Be the person everyone calls in a crisis","Be the person everyone invites to a party",
-    "Nobody calls you when things are good.",
-    "When your own crisis hits, nobody's number comes to mind."],
-  ["social","Hear the honest opinion of everyone at your funeral","Have everyone at your funeral hear your honest opinion of them",
-    "Your parents speak first.",
-    "Your kids are in the front row, and they're on the list."],
-  ["social","Have a reputation for being kind but forgettable","Have a reputation for being difficult but unforgettable",
-    "Your own family forgets your birthday sometimes.",
-    "Your kids call you \"a lot\" in your eulogy."],
-  ["social","Only be able to talk about yourself","Never be able to talk about yourself",
-    "Even on first dates, and even at someone else's funeral.",
-    "Even at the doctor and in job interviews."],
-  ["social","Be the only one at the table who didn't get the joke, every time","Be the only one who laughed, every time",
-    "The joke is always about you.",
-    "The joke is always at someone's expense, and they're sitting at the table."],
-  ["social","Have your partner be best friends with your ex","Have your best friend start dating your ex",
-    "They text each other more than you and your partner do.",
-    "They get married, and you're in the wedding party."],
-
-  // ---------- UNHINGED ----------
-  ["chaos","Swap lives with the person directly in front of you in this line","Swap lives with the person directly behind you",
-    "Their bank balance, their search history, and their next 6 months come with it.",
-    "Their family, their debt, and their group chats come with it."],
-  ["chaos","Stand in this exact line forever, but it's in your favorite place on Earth","Skip to the front of every line, but every line is at the DMV",
-    "You can never sit down.",
-    "Every line counts: coffee, groceries, bathrooms, roller coasters."],
-  ["chaos","Have a narrator describe everything you do, audible to everyone","Have a personal theme song play whenever you walk into a room",
-    "The narrator also says what you're thinking.",
-    "Your most annoying ex picks the song."],
-  ["chaos","Sweat maple syrup","Cry hot sauce",
-    "Every summer, bees follow you.",
-    "It's ghost-pepper hot, and you cry at movies."],
-  ["chaos","Be followed everywhere by a mariachi band","Be followed everywhere by one pigeon that silently judges you",
-    "They play at funerals, in therapy, and during every first kiss.",
-    "The pigeon carries a little notebook and writes things down."],
-  ["chaos","Only speak in rhymes","Only speak in questions",
-    "That includes breakups and delivering bad news.",
-    "That includes your wedding vows and your 911 calls."],
-  ["chaos","Have every door you open lead to a random door somewhere on Earth","Have every staircase you take go the opposite direction",
-    "Bathroom doors included.",
-    "Fire escapes included."],
-  ["chaos","Have fingers as long as your legs","Have legs as long as your fingers",
-    "You can't hold a phone, and you can't hold hands.",
-    "You live on the 4th floor, with no elevator."],
-  ["chaos","Teleport 3 feet to the left every time you blink","Lose 3 seconds of time every time you blink",
-    "That includes while you're driving.",
-    "You blink about 15,000 times a day. That's about 12 hours a day gone."],
-  ["chaos","Have a cat the size of a horse","Have a horse the size of a cat",
-    "It still knocks things off tables, and now those things are cars.",
-    "It needs full horse care and lives 30 years."],
-  ["chaos","Only be able to walk backwards","Only be able to walk sideways, like a crab",
-    "That includes escalators, stairs, and your walk down the aisle.",
-    "Every narrow hallway, airplane aisle, and crowded bar."],
-  ["chaos","Have your hair grow one foot every day","Be completely bald, eyebrows included",
-    "It grows overnight, and you wake up wrapped in it.",
-    "Eyelashes too. Every speck of dust goes straight into your eyes."],
-  ["chaos","Have to fight one kangaroo every year, on your birthday","Have one goose follow and attack you once a week at a random time",
-    "The kangaroo remembers last year and has been training.",
-    "One week it lands in the middle of your wedding vows."],
-  ["chaos","Have your voice permanently sound like you just inhaled helium","Have your laugh permanently sound like a dial-up modem",
-    "That includes funerals, court, and every breakup.",
-    "That includes every nervous laugh in a serious meeting."],
-  ["chaos","Fight 20 kids under 5 (they're all organized)","Fight one grandpa who knows martial arts",
-    "Their parents are filming.",
-    "He's undefeated, and he has nothing left to lose."],
-  ["chaos","Eat every meal for the rest of your life with chopsticks","Eat every meal for the rest of your life with your hands",
-    "Soup. Cereal. Ice cream. Forever.",
-    "Spaghetti, first dates, and fancy restaurants included."],
-  ["chaos","Have your shoes squeak with every step, forever","Have one sock always slightly wet, forever",
-    "Funerals, libraries, and sneaking in at 2 a.m. included.",
-    "You never know which foot until you step down."],
-  ["chaos","Have a third arm that does whatever it wants","Have a third eye that sees only the past",
-    "It's left-handed, and it doesn't like your boss.",
-    "It shows you whatever happened at this exact spot, including in hospitals."],
-  ["chaos","Be chased by one T. rex, once","Be chased by 1,000 squirrels, every Thursday",
-    "No head start. It's already running.",
-    "The squirrels learn and get a little better every week."],
-];
-
-const GROUP_LINES = {
-  unanimous: ["Unanimous. You're all the same kind of weird.", "Total agreement. Suspicious.", "Nobody broke ranks. Next one should split you."],
-  split: ["Dead even. Someone has to defend their pick before the line moves.", "Perfect split. Argue it out.", "50/50. This is how friendships end."],
-  lone: ["One person stood alone. They owe the group an explanation.", "There's a lone wolf. Make them defend it.", "Odd one out. Interrogate them."],
-  majority: ["The majority wins, but the minority might be right.", "Clear winner. Minority: convince one person to flip.", "Most of you agree. Losers explain themselves."],
-};
-
-// ----- storage helpers (never required) -----
-const store = {
-  get(k, d) { try { const v = localStorage.getItem("lb:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-  set(k, v) { try { localStorage.setItem("lb:" + k, JSON.stringify(v)); } catch {} },
-};
-
-// ----- state -----
-const state = {
-  cat: store.get("cat", "all"),
-  mode: store.get("mode", "solo"),
-  players: store.get("players", 3),
-  answered: store.get("answered", 0),
-  seen: new Set(store.get("seen", [])),
-  history: [],
-  hIndex: -1,
-  current: null,
-  picked: null,
-  votes: [],
-  voter: 0,
-};
-
-const $ = (id) => document.getElementById(id);
-const els = {
-  app: $("app"), chips: $("chips"), count: $("count"), catTag: $("catTag"), left: $("left"),
-  choices: $("choices"), optA: $("optA"), optB: $("optB"),
-  twist: $("twist"), twistText: $("twistText"), keepBtn: $("keepBtn"), switchBtn: $("switchBtn"),
-  reveal: $("reveal"), splitA: $("splitA"), splitB: $("splitB"), nA: $("nA"), nB: $("nB"), revealText: $("revealText"),
-  next: $("nextBtn"), back: $("backBtn"), share: $("shareBtn"),
-  pass: $("pass"), passWho: $("passWho"), passSub: $("passSub"), passGo: $("passGo"),
-  soloBtn: $("soloBtn"), groupBtn: $("groupBtn"), pc: $("pc"), toast: $("toast"),
-};
-
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const pool = () => Q.map((q, i) => i).filter((i) => state.cat === "all" || Q[i][0] === state.cat);
-
-// ----- chips -----
-function renderChips() {
-  const all = [["all", "Everything", "var(--ink)"], ...Object.entries(CATS).map(([k, v]) => [k, v.name, v.color])];
-  els.chips.innerHTML = "";
-  for (const [k, name, color] of all) {
-    const b = document.createElement("button");
-    b.className = "chip";
-    b.setAttribute("aria-pressed", String(state.cat === k));
-    b.innerHTML = `<span class="dot" style="background:${color}"></span>${name}`;
-    b.onclick = () => { state.cat = k; store.set("cat", k); renderChips(); newQuestion(); };
-    els.chips.appendChild(b);
-  }
-}
-
-// ----- question flow -----
-function drawIndex() {
-  const p = pool();
-  let fresh = p.filter((i) => !state.seen.has(i));
-  if (!fresh.length) { p.forEach((i) => state.seen.delete(i)); fresh = p; toast("Deck reshuffled"); }
-  // avoid immediate repeat
-  if (fresh.length > 1 && state.current != null) fresh = fresh.filter((i) => i !== state.current);
-  return pick(fresh);
-}
-
-function newQuestion() {
-  const idx = drawIndex();
-  state.history = state.history.slice(0, state.hIndex + 1);
-  state.history.push(idx);
-  state.hIndex = state.history.length - 1;
-  show(idx);
-}
-
-function show(idx) {
-  state.current = idx;
-  state.picked = null;
-  state.votes = [];
-  state.voter = 0;
-  const [cat, a, b] = Q[idx];
-  const c = CATS[cat];
-  els.catTag.querySelector(".dot").style.background = c.color;
-  els.catTag.lastElementChild.textContent = c.name.toUpperCase();
-  els.optA.querySelector(".txt").textContent = a;
-  els.optB.querySelector(".txt").textContent = b;
-  els.choices.classList.remove("decided");
-  els.optA.classList.remove("picked"); els.optB.classList.remove("picked");
-  els.optA.querySelector(".bar").style.width = "0";
-  els.optB.querySelector(".bar").style.width = "0";
-  els.twist.classList.remove("show");
-  els.reveal.classList.remove("show");
-  els.app.classList.remove("answered");
-  els.keepBtn.removeAttribute("aria-pressed"); els.switchBtn.removeAttribute("aria-pressed");
-  els.next.textContent = "Skip";
-  els.back.disabled = state.hIndex <= 0;
-  els.back.style.opacity = state.hIndex <= 0 ? .4 : 1;
-  const p = pool(); const unseen = p.filter((i) => !state.seen.has(i) && i !== idx).length;
-  els.left.textContent = `${unseen} left in deck`;
-  if (state.mode === "group") openPass();
-}
-
-function choose(which) {
-  if (state.current == null || state.picked != null) return;
-  if (state.mode === "group") return groupVote(which);
-  state.picked = which;
-  markPicked(which);
-  commitAnswered();
-  els.twistText.textContent = Q[state.current][which === "a" ? 3 : 4];
-  els.twist.classList.add("show");
-  els.next.textContent = "Next one →";
-}
-
-function markPicked(which) {
-  els.choices.classList.add("decided");
-  els.app.classList.add("answered");
-  (which === "a" ? els.optA : els.optB).classList.add("picked");
-  if (navigator.vibrate) try { navigator.vibrate(12); } catch {}
-}
-
-function commitAnswered() {
-  state.seen.add(state.current);
-  state.answered += 1;
-  store.set("seen", [...state.seen]);
-  store.set("answered", state.answered);
-  renderCount();
-}
-
-function renderCount() { els.count.textContent = `${state.answered} answered`; }
-
-// ----- group mode -----
-function openPass() {
-  els.passWho.textContent = `Player ${state.voter + 1}`;
-  els.passSub.textContent = state.voter === 0 ? "New question. Read it to yourself, pick, then pass it on." : "Hand the phone over. No peeking at the last pick.";
-  els.pass.classList.add("show");
-}
-els.passGo.onclick = () => els.pass.classList.remove("show");
-
-function groupVote(which) {
-  state.votes.push(which);
-  state.voter += 1;
-  if (navigator.vibrate) try { navigator.vibrate(12); } catch {}
-  if (state.voter < state.players) { openPass(); return; }
-  // reveal
-  state.picked = "group";
-  commitAnswered();
-  const nA = state.votes.filter((v) => v === "a").length, nB = state.votes.length - nA;
-  els.choices.classList.add("decided"); els.app.classList.add("answered");
-  if (nA >= nB) els.optA.classList.add("picked");
-  if (nB >= nA) els.optB.classList.add("picked");
-  const pa = Math.round((nA / state.votes.length) * 100);
-  els.optA.querySelector(".bar").style.width = pa + "%";
-  els.optB.querySelector(".bar").style.width = (100 - pa) + "%";
-  els.splitA.style.width = pa + "%"; els.splitB.style.width = (100 - pa) + "%";
-  els.nA.textContent = nA; els.nB.textContent = nB;
-  const kind = nA === 0 || nB === 0 ? "unanimous" : nA === nB ? "split" : Math.min(nA, nB) === 1 ? "lone" : "majority";
-  els.revealText.textContent = pick(GROUP_LINES[kind]);
-  els.reveal.classList.add("show");
-  els.next.textContent = "Next one →";
-}
-
-// ----- twist -----
-function twistAnswer(sw) {
-  els.keepBtn.setAttribute("aria-pressed", String(!sw));
-  els.switchBtn.setAttribute("aria-pressed", String(sw));
-  if (sw) {
-    const other = state.picked === "a" ? "b" : "a";
-    els.optA.classList.remove("picked"); els.optB.classList.remove("picked");
-    (other === "a" ? els.optA : els.optB).classList.add("picked");
-    state.picked = other;
-    toast("Flipped. Interesting.");
-  } else {
-    toast("Holding the line.");
-  }
-}
-els.keepBtn.onclick = () => twistAnswer(false);
-els.switchBtn.onclick = () => twistAnswer(true);
-
-// ----- nav -----
-els.optA.onclick = () => choose("a");
-els.optB.onclick = () => choose("b");
-els.next.onclick = () => {
-  if (state.picked == null && state.current != null) { state.seen.add(state.current); store.set("seen", [...state.seen]); }
-  if (state.hIndex < state.history.length - 1) { state.hIndex += 1; show(state.history[state.hIndex]); }
-  else newQuestion();
-};
-els.back.onclick = () => { if (state.hIndex > 0) { state.hIndex -= 1; show(state.history[state.hIndex]); } };
-
-els.share.onclick = async () => {
-  const [, a, b] = Q[state.current];
-  const text = `Would you rather…\nA) ${a}\nB) ${b}`;
-  const url = location.origin + location.pathname;
-  try {
-    if (navigator.share) { await navigator.share({ title: "Would you rather", text, url }); return; }
-    await navigator.clipboard.writeText(`${text}\n\n${url}`); toast("Copied");
-  } catch {}
-};
-
-// mode
-function setMode(m) {
-  state.mode = m; store.set("mode", m);
-  els.app.classList.toggle("group", m === "group");
-  els.soloBtn.setAttribute("aria-pressed", String(m === "solo"));
-  els.groupBtn.setAttribute("aria-pressed", String(m === "group"));
-  if (state.current != null) show(state.current);
-}
-els.soloBtn.onclick = () => setMode("solo");
-els.groupBtn.onclick = () => setMode("group");
-function setPlayers(n) {
-  state.players = Math.max(2, Math.min(8, n)); store.set("players", state.players);
-  els.pc.textContent = state.players;
-}
-$("minus").onclick = () => setPlayers(state.players - 1);
-$("plus").onclick = () => setPlayers(state.players + 1);
-
-// theme
-function applyTheme(t) {
-  if (t) document.documentElement.setAttribute("data-theme", t); else document.documentElement.removeAttribute("data-theme");
-}
-applyTheme(store.get("theme", null));
-$("themeBtn").onclick = () => {
-  const dark = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() === "#0e0d0c";
-  const t = dark ? "light" : "dark"; store.set("theme", t); applyTheme(t);
-};
-
-// keyboard
-document.addEventListener("keydown", (e) => {
-  if (els.pass.classList.contains("show")) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); els.passGo.click(); } return; }
-  if (e.key === "ArrowLeft" || e.key === "1" || e.key.toLowerCase() === "a") choose("a");
-  else if (e.key === "ArrowRight" || e.key === "2" || e.key.toLowerCase() === "b") choose("b");
-  else if (e.key === " " || e.key === "Enter") { if (document.activeElement && document.activeElement.classList.contains("opt")) return; e.preventDefault(); els.next.click(); }
-  else if (e.key === "Backspace") els.back.click();
-});
-
-// swipe up/left = next (after answering)
-let sx = 0, sy = 0;
-$("stage").addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
-$("stage").addEventListener("touchend", (e) => {
-  const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
-  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-    if (dx < 0) els.next.click(); else els.back.click();
-  }
-}, { passive: true });
-
-let tt;
-function toast(msg) {
-  els.toast.textContent = msg; els.toast.classList.add("show");
-  clearTimeout(tt); tt = setTimeout(() => els.toast.classList.remove("show"), 1400);
-}
-
-// boot
-if (!["all", ...Object.keys(CATS)].includes(state.cat)) state.cat = "all";
-renderChips(); renderCount(); setPlayers(state.players);
-els.app.classList.toggle("group", state.mode === "group");
-els.soloBtn.setAttribute("aria-pressed", String(state.mode === "solo"));
-els.groupBtn.setAttribute("aria-pressed", String(state.mode === "group"));
-newQuestion();
-</script>
+<script src="/wyr/core.js?v=2"></script>
+<script src="/wyr/games/wyr.js?v=2"></script>
+<script src="/wyr/games/forehead.js?v=2"></script>
+<script src="/wyr/games/imposter.js?v=2"></script>
+<script src="/wyr/games/forbidden.js?v=2"></script>
+<script src="/wyr/games/hotpotato.js?v=2"></script>
+<script src="/wyr/games/quickdraw.js?v=2"></script>
+<script src="/wyr/games/fiveseconds.js?v=2"></script>
+<script src="/wyr/games/trivia.js?v=2"></script>
+<script src="/wyr/games/sketch.js?v=2"></script>
+<script src="/wyr/games/guesstimate.js?v=2"></script>
+<script src="/wyr/games/emoji.js?v=2"></script>
+<script src="/wyr/games/prompts.js?v=2"></script>
+<script src="/wyr/games/fingerpick.js?v=2"></script>
+<script>LB.start();</script>
 </body>
 </html>
